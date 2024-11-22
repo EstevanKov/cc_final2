@@ -64,7 +64,7 @@ export function CreateMedicationsView() {
 
     try {
       const response = await fetch(
-        `${API_URL}/medications/addWithSchedule`,
+        `${API_URL}medications/addWithSchedule`,
         {
           method: "POST",
           headers: {

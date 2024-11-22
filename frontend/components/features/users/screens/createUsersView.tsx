@@ -1,3 +1,4 @@
+<script src="http://localhost:8081"></script>
 import React from 'react';
 import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity } from 'react-native';
 import { Link } from 'expo-router';
@@ -13,6 +14,7 @@ export const CreateUsersView = () => {
   } = useCreateUser();
 
   return (
+    
     <View style={styles.container}>
       <Text style={styles.title}>REGISTRO</Text>
       <Text style={styles.subtitle}>Date de alta llenando los siguientes datos.</Text>

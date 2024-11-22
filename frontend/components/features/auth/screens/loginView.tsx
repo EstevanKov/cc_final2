@@ -1,19 +1,20 @@
 // src/features/auth/presentation/LoginView.tsx
 
-import { Link, useRouter } from "expo-router";
 import React, { useState } from "react";
-import { View, Text, TextInput, Button, StyleSheet, Image, TouchableOpacity } from "react-native";
-import { useLogin } from "../aplications/useLogin";
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from "react-native";
+import { Link, useRouter } from "expo-router";
+import { useAuth } from "../providers/AuthProvider"; // Importa el provider para usar la autenticación
 
 export function LoginView() {
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState("");
+  const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
+  const { login } = useAuth(); // Hook para gestionar el login
   const router = useRouter();
 
   const handleLogin = async () => {
-    const result = await useLogin(email, password);
+    const result = await login(email, password);
     if (result.success) {
       setSuccessMessage(result.message);
       setErrorMessage('');
@@ -50,12 +51,8 @@ export function LoginView() {
         <Text style={styles.loginButtonText}>INICIAR SESIÓN</Text>
       </TouchableOpacity>
 
-      {successMessage ? (
-        <Text style={styles.success}>{successMessage}</Text>
-      ) : null}
-      {errorMessage ? (
-        <Text style={styles.error}>{errorMessage}</Text>
-      ) : null}
+      {successMessage && <Text style={styles.success}>{successMessage}</Text>}
+      {errorMessage && <Text style={styles.error}>{errorMessage}</Text>}
 
       <Link href="/users/register" style={styles.registerText}>
         ¿No tienes una cuenta? <Text style={styles.registerLink}>Regístrate</Text>
@@ -123,5 +120,5 @@ const styles = StyleSheet.create({
   registerLink: {
     fontWeight: "bold",
     color: "#20B2AA",
-  },
+  },
 });

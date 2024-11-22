@@ -36,7 +36,7 @@ export const DeleteUserView = () => {
         });
 
         // Eliminar usuario*/
-        await axios.delete(`${API_URL}/users/${id}`, {
+        await axios.delete(`${API_URL}users/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
           data: { currentPassword }, // Enviar la contraseña actual para la confirmación
         });

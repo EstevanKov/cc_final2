@@ -38,7 +38,7 @@ export function EditMedicationsView({ navigation }: { navigation: any }) {
   const fetchMedicationDetails = async () => {
    
     const token = await AsyncStorage.getItem('access_token');
-    const response = await fetch(`${API_URL}/medications/${medicationId}`, {
+    const response = await fetch(`${API_URL}medications/${medicationId}`, {
       method: 'GET',
       headers: { Authorization: `Bearer ${token}` },
     });
@@ -83,7 +83,7 @@ export function EditMedicationsView({ navigation }: { navigation: any }) {
     
 
     try {
-      const response = await fetch(`${API_URL}/medications/editWithSchedule/${medicationId}`, {
+      const response = await fetch(`${API_URL}medications/editWithSchedule/${medicationId}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',

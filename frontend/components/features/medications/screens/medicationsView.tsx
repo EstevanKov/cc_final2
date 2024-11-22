@@ -38,7 +38,7 @@ export const MedicationsView = () => {
           return;
         }
 
-        const response = await fetch(`${API_URL}/medications`, {
+        const response = await fetch(`${API_URL}medications`, {
           method: 'GET',
           headers: {
             Authorization: `Bearer ${token}`,
@@ -76,7 +76,7 @@ export const MedicationsView = () => {
       const token = await AsyncStorage.getItem('access_token');
       if (!token) return;
 
-      const response = await fetch(`${API_URL}/medications/delete/${id}`, {
+      const response = await fetch(`${API_URL}medications/delete/${id}`, {
         method: 'DELETE',
         headers: {
           Authorization: `Bearer ${token}`,

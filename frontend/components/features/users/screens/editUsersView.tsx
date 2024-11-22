@@ -23,7 +23,7 @@ export const EditUserView = () => {
       const id = await AsyncStorage.getItem("id");
       if (token) {
         try {
-          const response = await axios.get(`${API_URL}/users/${id}`, {
+          const response = await axios.get(`${API_URL}users/${id}`, {
             headers: { Authorization: `Bearer ${token}` }
           });
           setUser(response.data);
