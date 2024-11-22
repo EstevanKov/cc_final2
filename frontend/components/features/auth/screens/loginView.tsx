@@ -19,7 +19,7 @@ export function LoginView() {
       setSuccessMessage(result.message);
       setErrorMessage('');
       setTimeout(() => {
-        router.push('/'); // Redirigir a la pantalla principal
+        router.push('/users/loged'); // Redirigir a la pantalla principal
       }, 2000);
     } else {
       setErrorMessage(result.message);
