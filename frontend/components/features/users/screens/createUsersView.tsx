@@ -1,4 +1,3 @@
-<script src="http://localhost:8081"></script>
 import React from 'react';
 import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity } from 'react-native';
 import { Link } from 'expo-router';

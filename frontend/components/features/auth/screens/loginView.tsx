@@ -1,16 +1,14 @@
-// src/features/auth/presentation/LoginView.tsx
-
 import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from "react-native";
 import { Link, useRouter } from "expo-router";
-import { useAuth } from "../providers/AuthProvider"; // Importa el provider para usar la autenticación
+import { useAuth } from "../providers/AuthProvider"; 
 
 export function LoginView() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
-  const { login } = useAuth(); // Hook para gestionar el login
+  const { login } = useAuth(); 
   const router = useRouter();
 
   const handleLogin = async () => {
@@ -19,7 +17,7 @@ export function LoginView() {
       setSuccessMessage(result.message);
       setErrorMessage('');
       setTimeout(() => {
-        router.push('/users/loged'); // Redirigir a la pantalla principal
+        router.push('/users/loged'); 
       }, 2000);
     } else {
       setErrorMessage(result.message);

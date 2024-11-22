@@ -6,8 +6,7 @@ import { useEffect } from 'react';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import 'react-native-reanimated';
 import React from 'react';
-
-// Prevent the splash screen from auto-hiding before asset loading is complete.
+import { AuthProvider } from '../../components/features/auth/providers/AuthProvider';
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
@@ -28,15 +27,16 @@ export default function RootLayout() {
   }
 
   return (
+    <AuthProvider>
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="users/loged" />
         <Stack.Screen name="medications" />
         <Stack.Screen name="medications/create" />
-        <Stack.Screen name="*not-found" options={{ headerShown: true }} />
-
+        <Stack.Screen name="*not-found" options={{ headerShown: false }} />
       </Stack>
     </ThemeProvider>
+    </AuthProvider>
   );
 }

@@ -1,4 +1,4 @@
-/*import { Link, Stack } from 'expo-router';
+import { Link, Stack } from 'expo-router';
 import { StyleSheet } from 'react-native';
 import React from "react";
 
@@ -31,12 +31,3 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
   },
 });
-*/
-
-import React from "react";
-import { LoginView } from "../components/features/auth/screens/loginView";
-
-export default function LoginScreen(){
-
-    return <LoginView/>;
-}

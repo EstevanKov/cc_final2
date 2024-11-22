@@ -64,7 +64,7 @@ export const MedicationsView = () => {
 
   const handleEdit = (id: number) => {
     console.log(`Editar medicamento con ID: ${id}`);
-    AsyncStorage.setItem('medicationId', id.toString());  // Guardar el ID en AsyncStorage
+    AsyncStorage.setItem('medicationId', id.toString());
     router.push("/medications/edit");
   };
   
@@ -148,7 +148,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 2,
-    elevation: 3, // Sombra para Android
+    elevation: 3, 
   },
   time: {
     fontSize: 12,
@@ -175,10 +175,10 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   editIcon: {
-    color: '#4CAF50', // Color verde para el botón de editar
+    color: '#4CAF50', 
   },
   deleteIcon: {
-    color: '#F44336', // Color rojo para el botón de eliminar
+    color: '#F44336',
   },
   title: {
     fontSize: 24,

@@ -8,6 +8,7 @@ import 'react-native-reanimated';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import React from 'react';
 import { AuthProvider } from '@/components/features/auth/providers/AuthProvider';
+import { CreateMedicationsProvider } from '../components/features/medications/providers/CreateMedicationProvider';
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
@@ -29,12 +30,11 @@ export default function RootLayout() {
 
   return (
     <AuthProvider>
+<CreateMedicationsProvider>
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <Stack screenOptions={{
       headerShown: false,
     }}>
-
-    
 
         <Stack.Screen name="(tabs)" options={{ headerShown: true }} />
         <Stack.Screen name='users/loged'/>
@@ -43,6 +43,7 @@ export default function RootLayout() {
         <Stack.Screen name="+not-found" />
       </Stack>
     </ThemeProvider>
+    </CreateMedicationsProvider>
     </AuthProvider>
   );
 }

@@ -1,95 +1,26 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import {
   View,
   TextInput,
-  Button,
-  StyleSheet,
   Text,
+  StyleSheet,
   TouchableOpacity,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import {config} from  '../../../../config/config'
-const API_URL = config.API_URL;
+import { useCreateMedications } from "../aplications/useCreateMedication";
+
 export function CreateMedicationsView() {
-  const [name, setName] = useState("");
-  const [pillCount, setPillCount] = useState(1);
-  const [intervalHours, setIntervalHours] = useState(1);
-  const [endDate, setEndDate] = useState(new Date());
-  const [successMessage, setSuccessMessage] = useState("");
-
-  useEffect(() => {
-    calculateEndDate();
-  }, [pillCount, intervalHours]);
-
-  useEffect(() => {
-    if (successMessage) {
-      const timer = setTimeout(() => setSuccessMessage(""), 3000); // Eliminar el mensaje después de 3 segundos
-      return () => clearTimeout(timer);
-    }
-  }, [successMessage]);
-
-  const calculateEndDate = () => {
-    const currentDate = new Date();
-    const intervalInMilliseconds = intervalHours * 3600 * 1000; // Convertir horas a milisegundos
-    const totalTime = (pillCount - 1) * intervalInMilliseconds; // Tiempo total para todas las dosis
-    const calculatedEndDate = new Date(currentDate.getTime() + totalTime); // Fecha de término
-    setEndDate(calculatedEndDate);
-  };
-
-  const [loading, setLoading] = useState(false);
- 
-  const handleAddMedication = async () => {
-    if (loading) return; // Evitar múltiples clics
-    setLoading(true);
-
-    const token = await AsyncStorage.getItem("access_token");
-    const id = await AsyncStorage.getItem("id");
-
-    // Asegurarse de que endDate sea válida antes de convertir
-    if (isNaN(endDate.getTime())) {
-      console.error("Fecha de término inválida", endDate);
-      setSuccessMessage("Error en la fecha de término");
-      setLoading(false);
-      return;
-    }
-
-    const medicamentoData = {
-      name,
-      quantity: pillCount,
-      intervalo: intervalHours,
-      finish_time: endDate.toISOString(),
-      user: id,
-    };
-
-    try {
-      const response = await fetch(
-        `${API_URL}medications/addWithSchedule`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(medicamentoData),
-        }
-      );
-
-      if (response.ok) {
-        setSuccessMessage("Medicamento añadido exitosamente");
-        setName("");
-        setPillCount(1);
-        setIntervalHours(1);
-        setEndDate(new Date());
-      } else {
-        console.error("Error al añadir el medicamento", await response.json());
-      }
-    } catch (error) {
-      console.error("Error en la solicitud", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const {
+    name,
+    setName,
+    pillCount,
+    setPillCount,
+    intervalHours,
+    setIntervalHours,
+    endDate,
+    successMessage,
+    handleAddMedication,
+  } = useCreateMedications();
 
   return (
     <View style={styles.container}>
@@ -132,11 +63,11 @@ export function CreateMedicationsView() {
           <Text style={styles.successMessage}>{successMessage}</Text>
         ) : null}
 
-<View style={styles.buttonContainer}>
+        <View style={styles.buttonContainer}>
           <TouchableOpacity style={styles.button} onPress={handleAddMedication}>
             <Text style={styles.buttonText}>Agregar Medicamentos</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.cancelButton} onPress={() => {}}>
+          <TouchableOpacity style={styles.cancelButton}>
             <Text style={styles.buttonText}>Cancelar</Text>
           </TouchableOpacity>
         </View>
@@ -144,6 +75,8 @@ export function CreateMedicationsView() {
     </View>
   );
 }
+
+
 
 const styles = StyleSheet.create({
   container: {

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
-import { MaterialIcons } from "@expo/vector-icons"; // Para los íconos
+import { MaterialIcons } from "@expo/vector-icons";
 import { Link, router } from "expo-router";
 import axios from "axios";
 import {config} from  '../../../../config/config'
@@ -35,13 +35,11 @@ export const UsersView = () => {
     fetchUserData();
   }, []);
 
-  // Función para cerrar sesión y limpiar localStorage
   const logout = () => {
     localStorage.removeItem("access_token");
     localStorage.removeItem("id");
     localStorage.removeItem("refresh_token");
-    // Redirigir a la página de login
-    router.push( "/auth/login"); // Cambia esta línea si usas un enrutador diferente
+    router.push( "/auth/login");
   };
 
   const edit = () => {

@@ -38,18 +38,16 @@ export const DeleteUserView = () => {
         // Eliminar usuario*/
         await axios.delete(`${API_URL}users/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
-          data: { currentPassword }, // Enviar la contraseña actual para la confirmación
+          data: { currentPassword },
         });
 
-        // Eliminar datos de AsyncStorage
         await AsyncStorage.removeItem("access_token");
         await AsyncStorage.removeItem("refresh_token");
         await AsyncStorage.removeItem("id");
 
-        // Redirigir a la pantalla de inicio de sesión
         router.push("/auth/login");
       } catch (error: unknown) {
-        // Verificar si el error es de Axios
+
         if (error instanceof AxiosError) {
           setErrorMessage(error.response?.data?.message || "Hubo un problema al eliminar la cuenta.");
         } else {

@@ -43,7 +43,6 @@ export const EditUserView = () => {
     const token = await AsyncStorage.getItem("access_token");
     const id = await AsyncStorage.getItem("id");
   
-    // Validar contraseña actual antes de actualizar datos
     if (!currentPassword) {
       setErrorMessage("Por favor ingresa la contraseña actual para confirmar.");
       return;
@@ -52,7 +51,7 @@ export const EditUserView = () => {
     const updatedData = {};
     if (name !== user.user) updatedData.user = name;
     if (email !== user.email) updatedData.email = email;
-    if (password) updatedData.newPassword = password; // Cambiar a newPassword
+    if (password) updatedData.newPassword = password; 
   
     if (token && Object.keys(updatedData).length > 0) {
       try {
