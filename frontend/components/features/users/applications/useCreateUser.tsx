@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import axios, { AxiosError } from 'axios';
 import { useRouter } from 'expo-router';
-import Constants from "expo-constants";
-const { API_URL } = Constants.manifest.extra;
+import {config} from  '../../../../config/config'
+const API_URL = config.API_URL;
+
 
 interface ErrorResponse {
   message: string;

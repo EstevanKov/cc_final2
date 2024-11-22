@@ -2,8 +2,9 @@ import React, { useState } from "react";
 import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity } from "react-native";
 import axios, { AxiosError } from "axios";
 import { useRouter } from "expo-router";
-import Constants from "expo-constants";
-const { API_URL } = Constants.manifest.extra;
+import {config} from  '../../../../config/config'
+const API_URL = config.API_URL;
+
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export const DeleteUserView = () => {

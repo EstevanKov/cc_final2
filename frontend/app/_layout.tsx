@@ -36,9 +36,9 @@ export default function RootLayout() {
     
 
         <Stack.Screen name="(tabs)" options={{ headerShown: true }} />
-        <Stack.Screen name='home'/>
-        <Stack.Screen name='profile'/>
+        <Stack.Screen name='users/loged'/>
         <Stack.Screen name='medications'/>
+        <Stack.Screen name='medications/create'/>
         <Stack.Screen name="+not-found" />
       </Stack>
     </ThemeProvider>

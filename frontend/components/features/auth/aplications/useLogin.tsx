@@ -1,9 +1,8 @@
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import Constants from "expo-constants";
-const { API_URL } = Constants.manifest.extra;
-//console.log("BACKEND_URL:", BACKEND_URL);
 
+import {config} from  '../../../../config/config'
+const API_URL = config.API_URL;
 interface LoginResponse {
   success: boolean;
   message: string;

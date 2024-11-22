@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Constants from "expo-constants";
-const { API_URL } = Constants.manifest.extra;
+import {config} from  '../../../../config/config'
+const API_URL = config.API_URL;
+
 import { router } from 'expo-router';
 
 export const MedicationsView = () => {

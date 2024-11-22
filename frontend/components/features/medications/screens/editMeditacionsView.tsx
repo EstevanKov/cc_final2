@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { View, TextInput, Button, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Constants from "expo-constants";
-const { API_URL } = Constants.manifest.extra;
+import {config} from  '../../../../config/config'
+const API_URL = config.API_URL;
+
 
 export function EditMedicationsView({ navigation }: { navigation: any }) {
   const [medicationId, setMedicationId] = useState<string | null>(null);

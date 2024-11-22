@@ -3,8 +3,9 @@ import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons"; // Para los íconos
 import { Link, router } from "expo-router";
 import axios from "axios";
-import Constants from "expo-constants";
-const { API_URL } = Constants.manifest.extra;
+import {config} from  '../../../../config/config'
+const API_URL = config.API_URL;
+
 
 interface User {
   user: string;
