@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
-import { Link, router } from "expo-router";
+import { router } from "expo-router";
 import axios from "axios";
 import {config} from  '../../../../config/config'
 const API_URL = config.API_URL;
@@ -86,6 +86,7 @@ export const UsersView = () => {
           <Text style={styles.logoutButtonText}>Cerrar sesión</Text>
         </TouchableOpacity>
       </View>
+      
     </View>
   );
 };

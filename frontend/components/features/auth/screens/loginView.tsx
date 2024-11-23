@@ -17,7 +17,7 @@ export function LoginView() {
       setSuccessMessage(result.message);
       setErrorMessage('');
       setTimeout(() => {
-        router.push('/users/loged'); 
+        router.push('/'); 
       }, 2000);
     } else {
       setErrorMessage(result.message);

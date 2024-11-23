@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react"; 
-import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, TextInput, StyleSheet, TouchableOpacity } from "react-native";
 import axios from "axios";
 import { useRouter } from "expo-router";
 import {config} from  '../../../../config/config'
@@ -56,7 +56,7 @@ export const EditUserView = () => {
     if (token && Object.keys(updatedData).length > 0) {
       try {
         const response = await axios.patch(
-          `${apiURL}/users/${id}`,
+          `${API_URL}/users/${id}`,
           { ...updatedData, currentPassword },
           {
             headers: { Authorization: `Bearer ${token}` },
