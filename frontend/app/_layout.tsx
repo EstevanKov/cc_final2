@@ -38,47 +38,98 @@ export default function RootLayout() {
 }
 */
 
-
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { NavigationContainer } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import UsersScreen from './users/loged';
 import CreateMedicationsScreen from './medications/create';
 import MedicationsScreen from './medications/index';
-import { NavigationContainer } from '@react-navigation/native';
+import CreateUsersScreen from './users/register';
+
+
+import { LoginView } from '@/components/features/auth/screens/loginView';
+import { AuthProvider } from '@/components/features/auth/providers/AuthProvider';
+import { CreateMedicationsProvider } from '@/components/features/medications/providers/CreateMedicationProvider';
 
 const Tab = createBottomTabNavigator();
 
 const getIconName = (routeName: string): keyof typeof Ionicons.glyphMap => {
   switch (routeName) {
-    case 'Medications':
+    case 'Medicamentos':
       return 'heart';
-    case 'Create Medication':
+    case 'Nuevo':
       return 'medkit';
-    case 'User':
+    case 'Perfil':
+      return 'id-card';
+
+
+    case 'Login':
+      return 'body';
+    case 'Registro':
       return 'person';
     default:
       return 'home';
   }
 };
 
-export default function TabLayout() {
+export default function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const initializeAuth = async () => {
+      const token = await AsyncStorage.getItem('access_token');
+      setIsAuthenticated(!!token);
+      setLoading(false); // Deja de cargar una vez que se verifica la autenticación.
+    };
+
+    initializeAuth();
+  }, []);
+
+  if (loading) {
+    // Muestra un componente de carga mientras verificas el estado.
+    return <LoadingScreen />;
+  }
+
   return (
-    <NavigationContainer>
-    <Tab.Navigator
-      screenOptions={({ route }) => ({
-        tabBarIcon: ({ color, size }) => (
-          <Ionicons name={getIconName(route.name)} size={size} color={color} />
-        ),
-        tabBarActiveTintColor: '#2196F3',
-        tabBarInactiveTintColor: 'gray',
-        headerShown: false,
-      })}
-    >
-      <Tab.Screen name="users/loged" component={UsersScreen} />
-      <Tab.Screen name="medications" component={MedicationsScreen} />
-      <Tab.Screen name="medications/create" component={CreateMedicationsScreen} />
-    </Tab.Navigator>
-    </NavigationContainer>
+    <AuthProvider>
+      <CreateMedicationsProvider>
+        <NavigationContainer>
+          <Tab.Navigator
+            screenOptions={({ route }) => ({
+              tabBarIcon: ({ color, size }) => (
+                <Ionicons name={getIconName(route.name)} size={size} color={color} />
+              ),
+              tabBarActiveTintColor: '#2196F3',
+              tabBarInactiveTintColor: 'gray',
+              headerShown: false,
+            })}
+          >
+            {isAuthenticated ? (
+              <>
+                <Tab.Screen name="Perfil" component={UsersScreen} />
+                <Tab.Screen name="Medicamentos" component={MedicationsScreen} />
+                <Tab.Screen name="Nuevo" component={CreateMedicationsScreen} />
+              </>
+            ) : (
+              <><Tab.Screen name="Login" component={LoginView} />
+                <Tab.Screen name="Registro" component={CreateUsersScreen} /></>
+            )}
+          </Tab.Navigator>
+        </NavigationContainer>
+      </CreateMedicationsProvider>
+    </AuthProvider>
   );
 }
+
+function LoadingScreen() {
+  return (
+    <div style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <h1>Cargando...</h1>
+    </div>
+
+  );
+}  

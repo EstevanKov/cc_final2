@@ -25,10 +25,20 @@ export function useCreateMedications() {
   const calculateEndDate = () => {
     const currentDate = new Date();
     const intervalInMilliseconds = intervalHours * 3600 * 1000;
-    const totalTime = (pillCount - 1) * intervalInMilliseconds;
+    const totalTime = pillCount * intervalInMilliseconds;  // Ahora tomamos todas las pastillas
     const calculatedEndDate = new Date(currentDate.getTime() + totalTime);
+    
+    // Imprimir todas las fechas de las tomas de pastillas
+    console.log(`Recordatorio para ${name}:`);
+    for (let i = 0; i < pillCount; i++) {
+      const pillTime = new Date(currentDate.getTime() + i * intervalInMilliseconds);
+      const pillTimeFormatted = pillTime.toLocaleString();
+      console.log(`Toma ${i + 1}: ${pillTimeFormatted} - Debes tomar ${name}`);
+    }
+  
     setEndDate(calculatedEndDate);
   };
+  
 
   const handleAddMedication = async () => {
     const token = await AsyncStorage.getItem("access_token");

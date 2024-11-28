@@ -4,6 +4,8 @@ import { Ionicons } from '@expo/vector-icons';
 import UsersScreen from '../users/loged';
 import CreateMedicationsScreen from '../medications/create';
 import MedicationsScreen from '../medications/index';
+import { AuthProvider } from '@/components/features/auth/providers/AuthProvider';
+import { CreateMedicationsProvider } from '@/components/features/medications/providers/CreateMedicationProvider';
 
 const Tab = createBottomTabNavigator();
 
@@ -22,6 +24,8 @@ const getIconName = (routeName: string): keyof typeof Ionicons.glyphMap => {
 
 export default function TabLayout() {
   return (
+    <AuthProvider>
+  <CreateMedicationsProvider>
     <Tab.Navigator
       screenOptions={({ route }) => ({
         tabBarIcon: ({ color, size }) => (
@@ -36,5 +40,7 @@ export default function TabLayout() {
       <Tab.Screen name="medications" component={MedicationsScreen} />
       <Tab.Screen name="medications/create" component={CreateMedicationsScreen} />
     </Tab.Navigator>
+    </CreateMedicationsProvider>
+    </AuthProvider>
   );
 }

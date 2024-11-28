@@ -17,19 +17,33 @@ export class ShedulesService {
   async createS(shed: newShed): Promise<Shedules> {
     const medicina = new Medicina();
     medicina.id = shed.medicina; // Medicamento que acaba de ser creado
-
+  
     const user = new Users();
     user.id = shed.user; // Usuario que está activo en la sesión
-
+  
+    // Verifica si ya existe un schedule para la misma medicina y usuario
+    const existingSchedule = await this.sRepository.findOne({
+      where: {
+        medicina: medicina,
+        users: user
+      }
+    });
+  
+    if (existingSchedule) {
+      // Si ya existe un schedule, lo puedes actualizar o devolver el existente
+      return existingSchedule;
+    }
+  
     const shedul = this.sRepository.create({
       medicina,
       users: user,
       interval_hours: shed.intervalo,
       finish_dose_time: shed.finish_time,
     });
-
+  
     return await this.sRepository.save(shedul);
   }
+  
 
   async updateS(id: number, updateShed: updatShed) {
     const shedules = await this.sRepository.findOne({ where: { id } });
