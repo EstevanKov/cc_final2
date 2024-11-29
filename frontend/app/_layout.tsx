@@ -75,6 +75,7 @@ import { LoginView } from '@/components/features/auth/screens/loginView';
 import { AuthProvider } from '@/components/features/auth/providers/AuthProvider';
 import { CreateMedicationsProvider } from '@/components/features/medications/providers/CreateMedicationProvider';
 import { LoadingScreen } from '@/components/features/auth/screens/loadingScreen';
+import NotificationComponent from '../components/features/notifications/aplications/screens/notification';
 
 const Tab = createBottomTabNavigator();
 
@@ -120,6 +121,8 @@ export default function App() {
     <AuthProvider>
       <CreateMedicationsProvider>
         <NavigationContainer>
+        <NotificationComponent />
+
           <Tab.Navigator
             screenOptions={({ route }) => ({
               tabBarIcon: ({ color, size }) => (

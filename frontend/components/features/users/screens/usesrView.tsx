@@ -4,6 +4,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import axios from "axios";
 import {config} from  '../../../../config/config'
+import AsyncStorage from "@react-native-async-storage/async-storage";
 const API_URL = config.API_URL;
 
 
@@ -17,21 +18,23 @@ export const UsersView = () => {
 
   useEffect(() => {
     const fetchUserData = async () => {
-      const token = localStorage.getItem("access_token");
-      const id = localStorage.getItem("id");
-
+      const token = await AsyncStorage.getItem('access_token');
+      const id = await AsyncStorage.getItem('id');
+  
       if (token && id) {
         try {
+         // const response = await axios.get('https://0d8f-189-165-203-144.ngrok-free.app/users/1',{
           const response = await axios.get(`${API_URL}users/${id}`, {
-            headers: { Authorization: `Bearer ${token}` },
+            method:"GET",
+            headers: { Authorization: `Bearer ${token}`, Accept: 'application/json' },
           });
           setUser(response.data);
         } catch (error) {
-          console.error("Error fetching user data", error);
+          console.error('Error fetching user data', error);
         }
       }
     };
-
+  
     fetchUserData();
   }, []);
 
