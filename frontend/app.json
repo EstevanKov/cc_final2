@@ -23,9 +23,11 @@
     },
     "android": {
       "permissions": [
-        "android.permission.INTERNET",
-        "android.permission.ACCESS_FINE_LOCATION",
-        "android.permission.READ_CONTACTS"
+        "android.permissions.INTERNET",
+        "android.permissions.ACCESS_FINE_LOCATION",
+        "android.permissions.ACCESS_COARSE_LOCATION",
+        "android.permissions.READ_CONTACTS"
+
       ],
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
