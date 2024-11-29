@@ -1,3 +1,4 @@
+//medications/medications.entity.ts:
 import { Shedules } from "../shedules/shedules.entity";
 import { Users } from "../users/users.entity";
 import { PrimaryGeneratedColumn, Entity, Column, OneToMany, ManyToOne, JoinColumn } from "typeorm";

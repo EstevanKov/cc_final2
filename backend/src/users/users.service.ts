@@ -1,3 +1,5 @@
+//users/users.service.ts:
+
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { Users } from './users.entity';
@@ -34,15 +36,18 @@ export class UsersService {
     const user = await this.userRepository.findOne({
       where: { id },
       relations: {
-        medicina: true,
-        shedules: true
-      }
+        shedules: {
+          notifications: true, // Incluye notificaciones relacionadas a los schedules
+        },
+        medicina: true, // Incluye medicinas relacionadas
+      },
     });
     if (!user) {
       throw new NotFoundException(`User with id ${id} not found`);
     }
     return user;
   }
+  
 
  // Actualizar un usuario en el backend
 async updateUser(id: number, user: updateUser): Promise<void> {

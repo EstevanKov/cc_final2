@@ -1,8 +1,10 @@
+//shedules/shedules.service.ts:
+
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Shedules } from './shedules.entity';
-import { newShed, updatShed } from './shedelus.dto';
+import { newShed, updatShed } from './shedules.dto';
 import { Medicina } from '../medications/medications.entity';
 import { Users } from '../users/users.entity';
 
@@ -11,7 +13,8 @@ import { Users } from '../users/users.entity';
 @Injectable()
 export class ShedulesService {
   constructor(
-    @InjectRepository(Shedules) private readonly sRepository: Repository<Shedules>
+    @InjectRepository(Shedules) private readonly sRepository: Repository<Shedules>,
+    @InjectRepository(Users) private readonly userRepository: Repository<Users>,
   ) {}
 
   async createS(shed: newShed): Promise<Shedules> {
@@ -71,15 +74,19 @@ export class ShedulesService {
 
     async findShedules(id: number): Promise<Shedules> {
         const shedules = await this.sRepository.findOne({
-            where: { id },
-            relations: ['medicina', 'users', 'notifications'],
+          where: { id },
+          relations: {
+            medicina: true, // Incluye medicina relacionada
+            users: true,    // Incluye usuario relacionado
+            notifications: true, // Incluye notificaciones relacionadas
+          },
         });
         if (!shedules) {
-            throw new NotFoundException(`Shedules with id ${id} not found`);
+          throw new NotFoundException(`Schedule with id ${id} not found`);
         }
         return shedules;
-    }
-
+      }
+      
     // async updateS(id: number, shed: updatShed) {
     //     const updateResult = await this.sRepository.update(id, shed);
     //     if (updateResult.affected === 0) {
@@ -96,4 +103,18 @@ export class ShedulesService {
         await this.sRepository.delete(id);
         return 'Shedules deleted';
     }
+
+    async findShedulesByUser(userId: number): Promise<Shedules[]> {
+        const user = await this.userRepository.findOne({ where: { id: userId } });
+    
+        if (!user) {
+          throw new NotFoundException(`User with id ${userId} not found`);
+        }
+    
+        // Buscamos los schedules de ese usuario
+        return this.sRepository.find({
+          where: { users: { id: userId } },
+          relations: ['medicina', 'notifications'], // Puedes incluir otras relaciones que necesites
+        });
+      }
 }

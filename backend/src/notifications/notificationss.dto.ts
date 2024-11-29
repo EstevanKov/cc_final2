@@ -1,4 +1,4 @@
-
+//notifications/notificationss.dto.ts:
 export class Updatnotif{
     shedule?: number
     sent?: Date

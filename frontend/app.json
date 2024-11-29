@@ -2,9 +2,6 @@
   "expo": {
     "name": "capsule_care",
     "slug": "capsule_care",
-    "extra": {
-      "API": "http://localhost:3000"
-    },
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -17,11 +14,18 @@
     },
     "ios": {
       "supportsTablet": true,
-      "newArchEnabled": true
+      "newArchEnabled": true,
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "capsule Care necesita acceso a tu ubicación.",
+        "NSContactsUsageDescription": "capsule Care necesita acceso a tus contactos",
+        "UIBackgroundModes": ["remote-notification"]
+      }
     },
     "android": {
       "permissions": [
-        "INTERNET"
+        "android.permission.INTERNET",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.READ_CONTACTS"
       ],
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",

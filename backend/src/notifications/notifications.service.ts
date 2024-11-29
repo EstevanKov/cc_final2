@@ -1,3 +1,4 @@
+//notifications/notifications.service.ts:
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -12,25 +13,26 @@ export class NotificationsService {
         @InjectRepository(Notifications) private readonly notificationsRepository: Repository<Notifications>
     ) {}
 
-
     async createN(notification: newNotificacion) {
-
         const shedule = new Shedules();
         shedule.id = notification.schedule;
 
-        const notifi = new Notifications();
-        notifi.schedule = shedule;
-        notifi.message = notification.message;
-        notifi.sentAt = notification.sent;
-        notifi.type = notification.type;
+        const notifi = this.notificationsRepository.create({
+            schedule: shedule,
+            message: notification.message,
+            sentAt: notification.sent,
+            type: notification.type,
+        });
         return await this.notificationsRepository.save(notifi);
+    }
+
+    async createMany(notifications: Array<Partial<Notifications>>) {
+        return await this.notificationsRepository.save(notifications);
     }
 
     async findAll(): Promise<Notifications[]> {
         return await this.notificationsRepository.find({
-            relations: {
-                schedule: true
-            },
+            relations: ['schedule'],
         });
     }
 

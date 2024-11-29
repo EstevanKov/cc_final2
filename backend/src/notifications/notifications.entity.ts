@@ -1,3 +1,4 @@
+//notifications/notifications.entity.ts:
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
 import { Shedules } from '../shedules/shedules.entity';
 
@@ -6,9 +7,8 @@ export class Notifications {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @ManyToOne(() => Shedules, (shedules) => shedules.notifications)
+    @ManyToOne(() => Shedules, (shedules) => shedules.notifications, { onDelete: 'CASCADE' })
     @JoinColumn({ name: 'schedule_id' })
-
     schedule: Shedules;
 
     @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
@@ -22,4 +22,5 @@ export class Notifications {
 
     @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
     createdAt: Date;
+    
 }

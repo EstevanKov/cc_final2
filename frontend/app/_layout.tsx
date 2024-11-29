@@ -43,16 +43,38 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Notifications from 'expo-notifications';
 
+//Auth
+import LoginScreen from './auth/login';
+
+//Users
+import CreateUsersScreen from './users/register';
 import UsersScreen from './users/loged';
+import EditUsersScreen from './users/edit';
+import DeletetUsersScreen from './users/delete';
+//medications
 import CreateMedicationsScreen from './medications/create';
 import MedicationsScreen from './medications/index';
-import CreateUsersScreen from './users/register';
+import { EditMedicationsView } from '@/components/features/medications/screens/editMeditacionsView'; 
 
+
+async function requestPermissions() {
+  const { status } = await Notifications.getPermissionsAsync();
+  if (status !== 'granted') {
+    const { status } = await Notifications.requestPermissionsAsync();
+    if (status !== 'granted') {
+      console.warn('Se requieren permisos para enviar notificaciones.');
+      return;
+    }
+  }
+}
+requestPermissions();
 
 import { LoginView } from '@/components/features/auth/screens/loginView';
 import { AuthProvider } from '@/components/features/auth/providers/AuthProvider';
 import { CreateMedicationsProvider } from '@/components/features/medications/providers/CreateMedicationProvider';
+import { LoadingScreen } from '@/components/features/auth/screens/loadingScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -125,7 +147,7 @@ export default function App() {
   );
 }
 
-function LoadingScreen() {
+function Loading() {
   return (
     <div style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
       <h1>Cargando...</h1>

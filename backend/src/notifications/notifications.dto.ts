@@ -1,3 +1,4 @@
+//notifications/notifications.dto.ts:
 import { IsString, IsInt, IsNotEmpty } from 'class-validator';
 
 export class newNotificacion{
