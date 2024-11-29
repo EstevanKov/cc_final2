@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from "react-native";
 import { Link, useRouter } from "expo-router";
 import { useAuth } from "../providers/AuthProvider"; 
+import UsersScreen from "@/app/users/loged";
 
 export function LoginView() {
   const [email, setEmail] = useState('');
@@ -17,7 +18,7 @@ export function LoginView() {
       setSuccessMessage(result.message);
       setErrorMessage('');
       setTimeout(() => {
-        router.push('/'); 
+        router.push('/users/loged'); 
       }, 2000);
     } else {
       setErrorMessage(result.message);
@@ -48,13 +49,15 @@ export function LoginView() {
       <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
         <Text style={styles.loginButtonText}>INICIAR SESIÓN</Text>
       </TouchableOpacity>
-
       {successMessage && <Text style={styles.success}>{successMessage}</Text>}
       {errorMessage && <Text style={styles.error}>{errorMessage}</Text>}
 
+      <TouchableOpacity style={styles.registerText} >
+      <Text style={styles.registerLink}>¿No tienes una cuenta? Registrate</Text>
+      </TouchableOpacity>{/**
       <Link href="/users/register" style={styles.registerText}>
         ¿No tienes una cuenta? <Text style={styles.registerLink}>Regístrate</Text>
-      </Link>
+      </Link> */}
     </View>
   );
 }

@@ -1,3 +1,4 @@
+//medications/medications.dto.ts:
 import { IsString, IsInt, IsNotEmpty, Min } from 'class-validator';
 
 export class Newmedicina {

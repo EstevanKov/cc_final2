@@ -1,39 +1,70 @@
+//medications/medications.controller.ts:
+
 import { Body, Controller, Delete, Get, NotFoundException, Param, ParseIntPipe, Patch, Post, UseGuards } from '@nestjs/common';
 import { MedicationsService } from '../medications/medications.service';
 import { Newmedicina, Updatmedicina } from './medications.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { ShedulesService } from '../shedules/shedules.service';
+import { NotificationsService } from 'notifications/notifications.service';
+import { Shedules } from 'shedules/shedules.entity';
 
 @UseGuards(JwtAuthGuard)
 @Controller('medications')
 export class MedicationsController {
     constructor(
         private readonly MServ: MedicationsService,
-        private readonly shedulesService: ShedulesService // Inyecta el servicio correctamente aquí
+        private readonly shedulesService: ShedulesService,
+        private readonly notificationsService: NotificationsService
     ) {}
 
     @Post('/addWithSchedule')
-    async agregarMedicinaConHorario(
-        @Body() medicinaData: { name: string, quantity: number, user: number, intervalo: number, finish_time: Date }
-    ) {
-        // Guardar medicamento en la tabla Medicina
+async agregarMedicinaConHorario(
+    @Body() medicinaData: { 
+        name: string; 
+        quantity: number; 
+        user: number; 
+        intervalo: number; 
+        finish_time: Date; 
+        notifications: Array<{ sentAt: Date; message: string }> 
+    }
+) {
+    try {
+        // Validar si notifications es un arreglo y no está vacío
+        if (!Array.isArray(medicinaData.notifications) || medicinaData.notifications.length === 0) {
+            throw new Error('No se proporcionaron notificaciones válidas.');
+        }
+
+        // Guardar medicamento
         const nuevaMedicina = await this.MServ.createM(medicinaData);
 
-        // Esperar un breve tiempo (opcional)
-        await new Promise(resolve => setTimeout(resolve, 100));
-
-        // Crear el horario en la tabla Shedules usando el ID de la medicina creada
+        // Crear el horario
         const shedulesData = {
             medicina: nuevaMedicina.id,
             user: medicinaData.user,
             intervalo: medicinaData.intervalo,
             finish_time: medicinaData.finish_time,
         };
+        const nuevoHorario = await this.shedulesService.createS(shedulesData);
 
-        // Llamar al servicio de Shedules para guardar el horario
-        return this.shedulesService.createS(shedulesData);
+        // Crear notificaciones
+        const notificationsToSave = medicinaData.notifications.map(notification => ({
+            ...notification,
+            schedule: { id: nuevoHorario.id } as Shedules, // Relación válida con Shedules
+            type: 'reminder',
+        }));
+        const notificaciones = await this.notificationsService.createMany(notificationsToSave);
+
+        return {
+            medicamento: nuevaMedicina,
+            horario: nuevoHorario,
+            notificaciones,
+        };
+    } catch (error) {
+        console.error('Error al añadir medicamento, horario o notificaciones', error);
+        throw new Error('Error al añadir medicamento, horario o notificaciones');
     }
-    
+}
+
     @Patch('/editWithSchedule/:id')
     async editarMedicinaConHorario(
         @Param('id', ParseIntPipe) id: number,

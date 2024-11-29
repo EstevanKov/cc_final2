@@ -1,3 +1,5 @@
+//medications/medications.service.ts:
+
 import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -50,20 +52,26 @@ export class MedicationsService {
 
   async findAll(): Promise<Medicina[]> {
     const medications = await this.MRepository.find({ relations: ['user'] });
-    console.log('Medications fetched:', medications);  // Verificar los datos aquí
+  //  console.log('Medications fetched:', medications);  // Verificar los datos aquí
     return medications;
 }
 
 async findMedicina(id: number): Promise<Medicina> {
   const medicina = await this.MRepository.findOne({
-      where: { id },
-      relations: ['user', 'schedules'],
+    where: { id },
+    relations: {
+      user: true,        // Incluye usuario relacionado
+      schedules: {       // Incluye schedules relacionados
+        notifications: true, // Incluye notificaciones dentro de schedules
+      },
+    },
   });
   if (!medicina) {
-      throw new NotFoundException(`Medicina with id ${id} not found`);
+    throw new NotFoundException(`Medicina with id ${id} not found`);
   }
   return medicina;
 }
+
 
 
 // En MedicationsService

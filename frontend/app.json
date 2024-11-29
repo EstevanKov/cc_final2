@@ -2,9 +2,6 @@
   "expo": {
     "name": "capsule_care",
     "slug": "capsule_care",
-    "extra": {
-      "API": "http://localhost:3000"
-    },
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -19,8 +16,9 @@
       "supportsTablet": true,
       "newArchEnabled": true,
       "infoPlist": {
-        "NSLocationWhenInUseUsageDescription": "capsule_care necesita acceso a tu ubicación para mostrarte información basada en tu ubicación.",
-        "NSContactsUsageDescription": "capsule_care necesita acceso a tus contactos para ayudarte a gestionar tus recordatorios de medicación."
+        "NSLocationWhenInUseUsageDescription": "capsule Care necesita acceso a tu ubicación.",
+        "NSContactsUsageDescription": "capsule Care necesita acceso a tus contactos",
+        "UIBackgroundModes": ["remote-notification"]
       }
     },
     "android": {
@@ -29,6 +27,7 @@
         "android.permissions.ACCESS_FINE_LOCATION",
         "android.permissions.ACCESS_COARSE_LOCATION",
         "android.permissions.READ_CONTACTS"
+
       ],
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",

@@ -25,4 +25,4 @@ export const useLogin = async (email: string, password: string): Promise<LoginRe
     const errorMessage = error.response?.data?.message || "Error desconocido. Inténtalo de nuevo.";
     return { success: false, message: errorMessage };
   }
-};
+};  

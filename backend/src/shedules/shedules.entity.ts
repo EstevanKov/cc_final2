@@ -1,3 +1,4 @@
+//shedules/shedules.entity.ts:
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
 import { Medicina } from '../medications/medications.entity';
 import { Users } from '../users/users.entity';

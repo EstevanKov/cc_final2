@@ -1,6 +1,9 @@
+//shedules/shedules.controller.ts:
+
+
 import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, UseGuards  } from '@nestjs/common';
 import { ShedulesService } from './shedules.service';
-import { newShed, updatShed } from './shedelus.dto';
+import { newShed, updatShed } from './shedules.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @UseGuards(JwtAuthGuard)
@@ -31,5 +34,10 @@ export class ShedulesController {
     @Delete(':id')
     delete(@Param('id', ParseIntPipe) id: number) {
         return this.shedulesService.deleteS(id);
+    }
+
+    @Get('user/:userId')
+    findShedulesByUser(@Param('userId', ParseIntPipe) userId: number) {
+      return this.shedulesService.findShedulesByUser(userId);
     }
 }
