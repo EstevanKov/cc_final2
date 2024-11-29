@@ -17,11 +17,18 @@
     },
     "ios": {
       "supportsTablet": true,
-      "newArchEnabled": true
+      "newArchEnabled": true,
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "capsule_care necesita acceso a tu ubicación para mostrarte información basada en tu ubicación.",
+        "NSContactsUsageDescription": "capsule_care necesita acceso a tus contactos para ayudarte a gestionar tus recordatorios de medicación."
+      }
     },
     "android": {
       "permissions": [
-        "INTERNET"
+        "android.permissions.INTERNET",
+        "android.permissions.ACCESS_FINE_LOCATION",
+        "android.permissions.ACCESS_COARSE_LOCATION",
+        "android.permissions.READ_CONTACTS"
       ],
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
