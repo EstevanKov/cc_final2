@@ -1,13 +1,13 @@
 import React, { createContext, useContext, useState, ReactNode, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useLogin } from "../aplications/useLogin";
+import { loginUser } from "../aplications/useLogin";
 
 interface AuthProviderProps {
-  children: ReactNode;  
+  children: ReactNode;
 }
 
 interface AuthContextProps {
-  login: (email: string, password: string) => Promise<{ success: boolean, message: string }>;
+  login: (email: string, password: string) => Promise<{ success: boolean; message: string }>;
   isAuthenticated: boolean;
   logout: () => Promise<void>;
 }
@@ -26,7 +26,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, []);
 
   const login = async (email: string, password: string) => {
-    const result = await useLogin(email, password);
+    const result = await loginUser(email, password);
     if (result.success) {
       setIsAuthenticated(true);
     }
@@ -51,4 +51,4 @@ export const useAuth = () => {
     throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
-}; 
+};

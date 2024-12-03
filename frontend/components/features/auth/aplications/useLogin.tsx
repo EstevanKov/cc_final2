@@ -9,7 +9,7 @@ interface LoginResponse {
   message: string;
 }
 
-export const useLogin = async (email: string, password: string): Promise<LoginResponse> => {
+export const loginUser = async (email: string, password: string): Promise<LoginResponse> => {
   const loginData = { email, password };
 
   try {
@@ -25,4 +25,4 @@ export const useLogin = async (email: string, password: string): Promise<LoginRe
     const errorMessage = error.response?.data?.message || "Error desconocido. Inténtalo de nuevo.";
     return { success: false, message: errorMessage };
   }
-};  
+};

@@ -44,38 +44,39 @@ import { NavigationContainer } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Notifications from 'expo-notifications';
+import { Text } from 'react-native';
+import { StyleSheet } from 'react-native';
 
-//Auth
-import LoginScreen from './auth/login';
+// Auth
+import { LoginView } from '@/components/features/auth/screens/loginView';
+import { AuthProvider } from '@/components/features/auth/providers/AuthProvider';
+import { LoadingScreen } from '@/components/features/auth/screens/loadingScreen';
 
-//Users
+// Users
 import CreateUsersScreen from './users/register';
 import UsersScreen from './users/loged';
-import EditUsersScreen from './users/edit';
-import DeletetUsersScreen from './users/delete';
-//medications
+
+// Medications
+import { CreateMedicationsProvider } from '@/components/features/medications/providers/CreateMedicationProvider';
 import CreateMedicationsScreen from './medications/create';
 import MedicationsScreen from './medications/index';
-import { EditMedicationsView } from '@/components/features/medications/screens/editMeditacionsView'; 
 
+// Notifications
+import NotificationComponent from '@/components/features/notifications/aplications/screens/notification';
+import { View, ActivityIndicator } from 'react-native';
 
+// Solicitar permisos para notificaciones
 async function requestPermissions() {
   const { status } = await Notifications.getPermissionsAsync();
   if (status !== 'granted') {
-    const { status } = await Notifications.requestPermissionsAsync();
-    if (status !== 'granted') {
+    const { status: requestedStatus } = await Notifications.requestPermissionsAsync();
+    if (requestedStatus !== 'granted') {
       console.warn('Se requieren permisos para enviar notificaciones.');
       return;
     }
   }
 }
 requestPermissions();
-
-import { LoginView } from '@/components/features/auth/screens/loginView';
-import { AuthProvider } from '@/components/features/auth/providers/AuthProvider';
-import { CreateMedicationsProvider } from '@/components/features/medications/providers/CreateMedicationProvider';
-import { LoadingScreen } from '@/components/features/auth/screens/loadingScreen';
-import NotificationComponent from '../components/features/notifications/aplications/screens/notification';
 
 const Tab = createBottomTabNavigator();
 
@@ -87,8 +88,6 @@ const getIconName = (routeName: string): keyof typeof Ionicons.glyphMap => {
       return 'medkit';
     case 'Perfil':
       return 'id-card';
-
-
     case 'Login':
       return 'body';
     case 'Registro':
@@ -104,16 +103,21 @@ export default function App() {
 
   useEffect(() => {
     const initializeAuth = async () => {
-      const token = await AsyncStorage.getItem('access_token');
-      setIsAuthenticated(!!token);
-      setLoading(false); // Deja de cargar una vez que se verifica la autenticación.
+      try {
+        const token = await AsyncStorage.getItem('access_token');
+        setIsAuthenticated(!!token);
+      } catch (error) {
+        console.error('Error fetching token:', error);
+        setIsAuthenticated(false);
+      } finally {
+        setLoading(false); // Solo después de terminar la carga, cambiamos el estado
+      }
     };
 
     initializeAuth();
   }, []);
 
   if (loading) {
-    // Muestra un componente de carga mientras verificas el estado.
     return <LoadingScreen />;
   }
 
@@ -121,8 +125,7 @@ export default function App() {
     <AuthProvider>
       <CreateMedicationsProvider>
         <NavigationContainer>
-        <NotificationComponent />
-
+          <NotificationComponent />
           <Tab.Navigator
             screenOptions={({ route }) => ({
               tabBarIcon: ({ color, size }) => (
@@ -140,8 +143,10 @@ export default function App() {
                 <Tab.Screen name="Nuevo" component={CreateMedicationsScreen} />
               </>
             ) : (
-              <><Tab.Screen name="Login" component={LoginView} />
-                <Tab.Screen name="Registro" component={CreateUsersScreen} /></>
+              <>
+                <Tab.Screen name="Login" component={LoginView} />
+                <Tab.Screen name="Registro" component={CreateUsersScreen} />
+              </>
             )}
           </Tab.Navigator>
         </NavigationContainer>
@@ -150,11 +155,26 @@ export default function App() {
   );
 }
 
+
 function Loading() {
   return (
-    <div style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <h1>Cargando...</h1>
-    </div>
-
+    <View style={styles.container}>
+      <ActivityIndicator size="large" color="#2196F3" />
+      <Text style={styles.text}>Cargando...</Text>
+    </View>
   );
-}  
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+  },
+  text: {
+    marginTop: 10,
+    fontSize: 16,
+    color: 'gray',
+  },
+});

@@ -1,31 +1,28 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from "react-native";
-import { Link, useRouter } from "expo-router";
-import { useAuth } from "../providers/AuthProvider"; 
-import UsersScreen from "@/app/users/loged";
+import { useRouter } from "expo-router";
+import { useAuth } from "../providers/AuthProvider";
 
 export function LoginView() {
+  const router = useRouter(); // Hook declarado al nivel superior
+  const { login } = useAuth(); // Hook declarado al nivel superior
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
-  const { login } = useAuth(); 
-  const router = useRouter();
 
   const handleLogin = async () => {
     const result = await login(email, password);
     if (result.success) {
       setSuccessMessage(result.message);
       setErrorMessage('');
-      setTimeout(() => {
-        router.push('/users/loged'); 
-      }, 2000);
+      router.push('/users/loged'); // Uso correcto de `router.push`
     } else {
       setErrorMessage(result.message);
       setSuccessMessage('');
     }
   };
-
   return (
     <View style={styles.container}>
       <Image source={require('../../../../assets/images/logo.png')} style={styles.logo} />
