@@ -3,5 +3,9 @@ import { CreateUsersView } from "../../components/features/users/screens/createU
 
 export default function CreateUsersScreen(){
 
-    return <CreateUsersView/>
+    return (
+    <>
+    <CreateUsersView/>
+   
+    </>)
 }

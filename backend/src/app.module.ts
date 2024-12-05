@@ -18,7 +18,7 @@ import { AuthModule } from './auth/auth.module';
       password: process.env.DATABASE_PASSWORD  ||'admin' ,
       database: process.env.DATABASE_NAME ||  'integradora2',
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
-      synchronize: false, 
+      synchronize: true, 
     }),
     UsersModule,
     MedicationsModule,

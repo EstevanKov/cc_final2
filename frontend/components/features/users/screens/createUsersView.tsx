@@ -1,9 +1,12 @@
-import React from 'react';
-import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity } from 'react-native';
-import { Link } from 'expo-router';
-import { useCreateUser } from '../applications/useCreateUser'; 
+import React, { useState } from "react";
+import { View, Text, TextInput, TouchableOpacity, StyleSheet } from "react-native";
+import { useNavigation } from '@react-navigation/native'; // Usar useNavigation de React Navigation
+import { NavigationProp } from '@react-navigation/native';
+import { RootTabParamList } from "../../types"; // Asegúrate de que RootTabParamList esté bien configurado
+import { useCreateUser } from '../applications/useCreateUser'; // Suponiendo que tienes este hook para manejar la creación de usuarios
 
 export const CreateUsersView = () => {
+  const navigation = useNavigation<NavigationProp<RootTabParamList>>(); // Usar el tipo adecuado para la navegación
   const {
     name, setName,
     email, setEmail,
@@ -11,9 +14,17 @@ export const CreateUsersView = () => {
     errorMessage, successMessage,
     handleCreateUser,
   } = useCreateUser();
+  
+
+  const handleSubmit = async () => {
+    const result = await handleCreateUser();
+    console.log(result); // Los mensajes ya se manejan dentro del hook
+  };
+  
+  
+  
 
   return (
-    
     <View style={styles.container}>
       <Text style={styles.title}>REGISTRO</Text>
       <Text style={styles.subtitle}>Date de alta llenando los siguientes datos.</Text>
@@ -41,18 +52,16 @@ export const CreateUsersView = () => {
         onChangeText={setPassword}
       />
       
-      <TouchableOpacity style={styles.createButton} onPress={handleCreateUser}>
+      <TouchableOpacity style={styles.createButton} onPress={handleSubmit}>
         <Text style={styles.createButtonText}>CREAR CUENTA</Text>
       </TouchableOpacity>
 
       {errorMessage && <Text style={styles.error}>{errorMessage}</Text>}
       {successMessage && <Text style={styles.success}>{successMessage}</Text>}
 
-      <Link href="/auth/login">
-        <Text style={styles.loginText}>
-          ¿Ya tienes una cuenta? <Text style={styles.loginLink}>Inicia Sesión</Text>
-        </Text>
-      </Link>
+      <TouchableOpacity style={styles.registerText} onPress={() => navigation.navigate('Login')}>
+        <Text style={styles.registerLink}>¿Ya tienes una cuenta? Inicia Sesión</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -107,12 +116,12 @@ const styles = StyleSheet.create({
     marginTop: 8, 
     textAlign: "center" 
   },
-  loginText: {
+  registerText: {
     textAlign: "center",
     marginTop: 16,
     color: "#000",
   },
-  loginLink: {
+  registerLink: {
     fontWeight: "bold",
     color: "#20B2AA",
   },

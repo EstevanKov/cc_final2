@@ -1,13 +1,13 @@
 import React, { createContext, useContext, useState, ReactNode, useEffect } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useLogin } from "../aplications/useLogin";
+import Loginstorage from "../../storage";
+import { loginUser } from "../aplications/useLogin";
 
 interface AuthProviderProps {
-  children: ReactNode;  
+  children: ReactNode;
 }
 
 interface AuthContextProps {
-  login: (email: string, password: string) => Promise<{ success: boolean, message: string }>;
+  login: (email: string, password: string) => Promise<{ success: boolean; message: string }>;
   isAuthenticated: boolean;
   logout: () => Promise<void>;
 }
@@ -19,14 +19,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   useEffect(() => {
     const checkAuth = async () => {
-      const token = await AsyncStorage.getItem("access_token");
+      const token = await Loginstorage.getItem("access_token");
+      console.log("Token almacenado:", token);
+
       setIsAuthenticated(!!token);
     };
     checkAuth();
   }, []);
 
   const login = async (email: string, password: string) => {
-    const result = await useLogin(email, password);
+    const result = await loginUser(email, password);
     if (result.success) {
       setIsAuthenticated(true);
     }
@@ -34,7 +36,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   const logout = async () => {
-    await AsyncStorage.clear();
+    await Loginstorage.clear();
     setIsAuthenticated(false);
   };
 
@@ -51,4 +53,4 @@ export const useAuth = () => {
     throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
-}; 
+};

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { View, TextInput, Button, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import {config} from  '../../../../config/config'
 const API_URL = config.API_URL;
+import Loginstorage from '../../storage';
 
 
 export function EditMedicationsView({ navigation }: { navigation: any }) {
@@ -18,7 +18,7 @@ export function EditMedicationsView({ navigation }: { navigation: any }) {
   useEffect(() => {
     const loadMedicationId = async () => {
       try {
-        const storedMedicationId = await AsyncStorage.getItem('medicationId');
+        const storedMedicationId = await Loginstorage.getItem('medicationId');
         if (storedMedicationId) {
           setMedicationId(storedMedicationId);
         }
@@ -37,7 +37,7 @@ export function EditMedicationsView({ navigation }: { navigation: any }) {
 
   const fetchMedicationDetails = async () => {
    
-    const token = await AsyncStorage.getItem('access_token');
+    const token = await Loginstorage.getItem('access_token');
     const response = await fetch(`${API_URL}medications/${medicationId}`, {
       method: 'GET',
       headers: { Authorization: `Bearer ${token}` },
@@ -63,8 +63,9 @@ export function EditMedicationsView({ navigation }: { navigation: any }) {
     if (loading) return;
     setLoading(true);
 
-    const token = await AsyncStorage.getItem('access_token');
-    const userId = await AsyncStorage.getItem('id');
+    const token = await Loginstorage.getItem('access_token');
+    const userId = await Loginstorage.getItem('id');
+    localStorage.removeItem("medicationId");
 
     if (isNaN(endDate.getTime())) {
       console.error('Fecha de término inválida', endDate);
@@ -73,6 +74,7 @@ export function EditMedicationsView({ navigation }: { navigation: any }) {
       return;
     }
 
+   
     const updatedMedicationData = {
       name,
       quantity: pillCount,
@@ -111,6 +113,13 @@ export function EditMedicationsView({ navigation }: { navigation: any }) {
       setLoading(false);
     }
   };
+
+  
+  const handleCancel = async () =>{
+    localStorage.removeItem("medicationId");
+    navigation.goBack()
+  }
+
 
   return (
     <View style={styles.container}>
@@ -159,7 +168,7 @@ export function EditMedicationsView({ navigation }: { navigation: any }) {
           </TouchableOpacity>
         </View>
         <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.cancelButton} onPress={() => navigation.goBack()}>
+          <TouchableOpacity style={styles.cancelButton} onPress={handleCancel}>
             <Text style={styles.cancelButtonText}>Cancelar</Text>
           </TouchableOpacity>
         </View>

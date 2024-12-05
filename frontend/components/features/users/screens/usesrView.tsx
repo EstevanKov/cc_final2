@@ -4,8 +4,11 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import axios from "axios";
 import {config} from  '../../../../config/config'
+//import AsyncStorage from "@react-native-async-storage/async-storage";
+import { NavigationProp, useNavigation } from "@react-navigation/native";
+import { RootTabParamList } from "../../types";
 const API_URL = config.API_URL;
-
+import Loginstorage from "../../storage";
 
 interface User {
   user: string;
@@ -13,41 +16,47 @@ interface User {
 }
 
 export const UsersView = () => {
+  const navigation = useNavigation<NavigationProp<RootTabParamList>>(); // Usar el tipo adecuado para la navegación
+
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
     const fetchUserData = async () => {
-      const token = localStorage.getItem("access_token");
-      const id = localStorage.getItem("id");
-
+      const token = await Loginstorage.getItem('access_token');
+      const id = await Loginstorage.getItem('id');
+  
       if (token && id) {
         try {
+         // const response = await axios.get('https://0d8f-189-165-203-144.ngrok-free.app/users/1',{
           const response = await axios.get(`${API_URL}users/${id}`, {
-            headers: { Authorization: `Bearer ${token}` },
+            method:"GET",
+            headers: { Authorization: `Bearer ${token}`, Accept: 'application/json' },
           });
           setUser(response.data);
         } catch (error) {
-          console.error("Error fetching user data", error);
+          console.error('Error fetching user data', error);
         }
       }
     };
-
+  
     fetchUserData();
   }, []);
 
   const logout = () => {
-    localStorage.removeItem("access_token");
-    localStorage.removeItem("id");
-    localStorage.removeItem("refresh_token");
-    router.push( "/auth/login");
+    Loginstorage.removeItem("access_token");
+    Loginstorage.removeItem("id");
+    Loginstorage.removeItem("refresh_token");
+    Loginstorage.removeItem("medicationId");
+
+    //   RNRestart.Restart();//window.location.reload();
   };
 
   const edit = () => {
-    router.push( "/users/edit");
+    navigation.navigate('EditarUsuario');
   };
 
   const deleteU = () =>{
-    router.push( "/users/delete");
+    navigation.navigate('EliminarUsuario');
   };
 
   return (

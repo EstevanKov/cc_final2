@@ -1,31 +1,36 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from "react-native";
-import { Link, useRouter } from "expo-router";
-import { useAuth } from "../providers/AuthProvider"; 
-import UsersScreen from "@/app/users/loged";
+import { useRouter } from "expo-router";
+import { useAuth } from "../providers/AuthProvider";
+import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { RootTabParamList } from "../../types";
+import RNRestart from 'react-native-restart';
+
 
 export function LoginView() {
+  const router = useRouter(); // Hook declarado al nivel superior
+  const { login } = useAuth(); // Hook declarado al nivel superior
+  const navigation = useNavigation<NavigationProp<RootTabParamList>>(); // Usar el tipo adecuado
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
-  const { login } = useAuth(); 
-  const router = useRouter();
 
   const handleLogin = async () => {
     const result = await login(email, password);
     if (result.success) {
       setSuccessMessage(result.message);
       setErrorMessage('');
-      setTimeout(() => {
-        router.push('/users/loged'); 
-      }, 2000);
+      //navigation.navigate('Perfil');
+      //   RNRestart.Restart();//window.location.reload();
+      RNRestart.Restart();
+
     } else {
       setErrorMessage(result.message);
       setSuccessMessage('');
     }
   };
-
   return (
     <View style={styles.container}>
       <Image source={require('../../../../assets/images/logo.png')} style={styles.logo} />
@@ -52,9 +57,10 @@ export function LoginView() {
       {successMessage && <Text style={styles.success}>{successMessage}</Text>}
       {errorMessage && <Text style={styles.error}>{errorMessage}</Text>}
 
-      <TouchableOpacity style={styles.registerText} >
-      <Text style={styles.registerLink}>¿No tienes una cuenta? Registrate</Text>
-      </TouchableOpacity>{/**
+      <TouchableOpacity style={styles.registerText} onPress={() => navigation.navigate('Registro')}  >
+        <Text style={styles.registerLink}>¿No tienes una cuenta? Registrate</Text>
+      </TouchableOpacity>
+      {/**
       <Link href="/users/register" style={styles.registerText}>
         ¿No tienes una cuenta? <Text style={styles.registerLink}>Regístrate</Text>
       </Link> */}
@@ -63,11 +69,11 @@ export function LoginView() {
 }
 
 const styles = StyleSheet.create({
-  container: { 
-    padding: 16, 
-    flex: 1, 
-    justifyContent: "center", 
-    backgroundColor: "#E0FFFF" 
+  container: {
+    padding: 16,
+    flex: 1,
+    justifyContent: "center",
+    backgroundColor: "#E0FFFF"
   },
   logo: {
     width: 200,
@@ -75,19 +81,19 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     marginBottom: 16,
   },
-  title: { 
-    fontSize: 24, 
-    fontWeight: "bold", 
-    marginBottom: 16, 
-    textAlign: "center", 
-    color: "#000" 
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 16,
+    textAlign: "center",
+    color: "#000"
   },
-  input: { 
-    borderWidth: 1, 
-    borderColor: "#00CED1", 
-    padding: 12, 
-    marginVertical: 8, 
-    borderRadius: 8, 
+  input: {
+    borderWidth: 1,
+    borderColor: "#00CED1",
+    padding: 12,
+    marginVertical: 8,
+    borderRadius: 8,
     backgroundColor: "#fff",
     color: "#000",
   },
@@ -103,15 +109,15 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
   },
-  error: { 
-    color: 'red', 
-    marginTop: 8, 
-    textAlign: "center" 
+  error: {
+    color: 'red',
+    marginTop: 8,
+    textAlign: "center"
   },
-  success: { 
-    color: 'blue', 
-    marginTop: 8, 
-    textAlign: "center" 
+  success: {
+    color: 'blue',
+    marginTop: 8,
+    textAlign: "center"
   },
   registerText: {
     textAlign: "center",

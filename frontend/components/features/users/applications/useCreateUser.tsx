@@ -1,7 +1,10 @@
 import { useState } from 'react';
 import axios, { AxiosError } from 'axios';
-import { useRouter } from 'expo-router';
+import { useNavigation, useRouter } from 'expo-router';
 import {config} from  '../../../../config/config'
+import { NavigationProp } from '@react-navigation/native';
+import { useAuth } from '../../auth/providers/AuthProvider';
+import { RootTabParamList } from '../../types';
 const API_URL = config.API_URL;
 
 
@@ -17,38 +20,44 @@ export const useCreateUser = () => {
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
-  const router = useRouter();
+  
+  const navigation = useNavigation<NavigationProp<RootTabParamList>>(); // Usar el tipo adecuado
 
-  const handleCreateUser = async () => {
+  const handleCreateUser = async (): Promise<{ success: boolean; message: string }> => {
     const userData = {
       user: name,
       email: email,
       password: password,
     };
-   
+  
     try {
-      const response = await axios.post(`${API_URL}auth/register`, userData); 
-      
+      const response = await axios.post(`${API_URL}auth/register`, userData);
+  
       setSuccessMessage(response.data.message);
       setErrorMessage('');
-
-      setTimeout(() => {
-        router.push('/auth/login');
-      }, 2000);
+  
+     // setTimeout(() => {
+        //navigation.navigate('Login');
+     // }, 2000);
+  
+      return { success: true, message: response.data.message };
     } catch (error) {
       const axiosError = error as AxiosError;
+  
       if (axiosError.response && axiosError.response.data) {
         const errorData = axiosError.response.data as ErrorResponse;
         setErrorMessage(errorData.message);
         setSuccessMessage('');
+        return { success: false, message: errorData.message };
       } else {
-        setErrorMessage('Error desconocido. Inténtalo de nuevo.');
+        const fallbackMessage = 'Error desconocido. Inténtalo de nuevo.';
+        setErrorMessage(fallbackMessage);
         setSuccessMessage('');
+        return { success: false, message: fallbackMessage };
       }
-      console.error(axiosError);
     }
   };
-
+  
   return {
     name, setName,
     email, setEmail,
