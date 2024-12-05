@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {config} from  '../../../../config/config'
-const API_URL = config.API_URL;
+import Loginstorage from '../../storage';
+import { config } from '../../../../config/config';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { RootTabParamList } from '../../types';
 
-import { router } from 'expo-router';
+const API_URL = config.API_URL;
 
 export const MedicationsView = () => {
   const [medications, setMedications] = useState<Medication[]>([]);
   const [loading, setLoading] = useState(true);
+  const navigation = useNavigation<NavigationProp<RootTabParamList>>();
 
   interface User {
     id: number;
@@ -28,11 +30,10 @@ export const MedicationsView = () => {
   }
 
   useEffect(() => {
-  
     const fetchMedications = async () => {
       try {
-        const token = await AsyncStorage.getItem('access_token');
-        const userId = await AsyncStorage.getItem('id');
+        const token = await Loginstorage.getItem('access_token');
+        const userId = await Loginstorage.getItem('id');
         if (!token || !userId) {
           console.error('No token or user ID found');
           return;
@@ -62,18 +63,14 @@ export const MedicationsView = () => {
     fetchMedications();
   }, []);
 
-  const handleEdit = (id: number) => {
-    console.log(`Editar medicamento con ID: ${id}`);
-    AsyncStorage.setItem('medicationId', id.toString());
-    router.push("/medications/edit");
+  const handleEdit = async (id: number) => {
+    await Loginstorage.setItem('medicationId', id.toString());
+    navigation.navigate('EditarMedicina');
   };
-  
 
   const handleDelete = async (id: number) => {
-   
-    console.log(`Eliminar medicamento con ID: ${id}`);
     try {
-      const token = await AsyncStorage.getItem('access_token');
+      const token = await Loginstorage.getItem('access_token');
       if (!token) return;
 
       const response = await fetch(`${API_URL}medications/delete/${id}`, {
@@ -106,14 +103,13 @@ export const MedicationsView = () => {
       <Text style={styles.medicationName}>{item.name}</Text>
       <Text style={styles.doseText}>Cantidad: {item.quantity}</Text>
       <View style={styles.iconsContainer}>
-  <TouchableOpacity style={styles.iconButton} onPress={() => handleEdit(item.id)}>
-    <MaterialIcons name="edit" size={24} style={styles.editIcon} />
-  </TouchableOpacity>
-  <TouchableOpacity style={styles.iconButton} onPress={() => handleDelete(item.id)}>
-    <MaterialIcons name="delete" size={24} style={styles.deleteIcon} />
-  </TouchableOpacity>
-</View>
-
+        <TouchableOpacity style={styles.iconButton} onPress={() => handleEdit(item.id)}>
+          <MaterialIcons name="edit" size={24} style={styles.editIcon} />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.iconButton} onPress={() => handleDelete(item.id)}>
+          <MaterialIcons name="delete" size={24} style={styles.deleteIcon} />
+        </TouchableOpacity>
+      </View>
     </View>
   );
 
@@ -132,6 +128,8 @@ export const MedicationsView = () => {
     </View>
   );
 };
+
+
 
 const styles = StyleSheet.create({
   container: {

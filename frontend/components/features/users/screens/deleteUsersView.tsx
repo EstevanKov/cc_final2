@@ -4,8 +4,10 @@ import axios, { AxiosError } from "axios";
 import { useRouter } from "expo-router";
 import {config} from  '../../../../config/config'
 const API_URL = config.API_URL;
+import Loginstorage from "../../storage";
+import RNRestart from 'react-native-restart';
 
-import AsyncStorage from "@react-native-async-storage/async-storage";
+//import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export const DeleteUserView = () => {
   const [currentPassword, setCurrentPassword] = useState("");
@@ -20,8 +22,8 @@ export const DeleteUserView = () => {
       return;
     }
 
-    const token = await AsyncStorage.getItem("access_token");
-    const id = await AsyncStorage.getItem("id");
+    const token = await Loginstorage.getItem("access_token");
+    const id = await Loginstorage.getItem("id");
 
     if (token && id) {
       try {
@@ -41,11 +43,12 @@ export const DeleteUserView = () => {
           data: { currentPassword },
         });
 
-        await AsyncStorage.removeItem("access_token");
-        await AsyncStorage.removeItem("refresh_token");
-        await AsyncStorage.removeItem("id");
+        await Loginstorage.removeItem("access_token");
+        await Loginstorage.removeItem("refresh_token");
+        await Loginstorage.removeItem("id");
+           RNRestart.Restart();//window.location.reload();
 
-        router.push("/auth/login");
+        //router.push("/auth/login");
       } catch (error: unknown) {
 
         if (error instanceof AxiosError) {

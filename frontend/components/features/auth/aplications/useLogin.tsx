@@ -1,5 +1,5 @@
 import axios from "axios";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import Loginstorage from "../../storage";
 import { config } from "../../../../config/config";
 
 const API_URL = config.API_URL;
@@ -16,9 +16,9 @@ export const loginUser = async (email: string, password: string): Promise<LoginR
     const response = await axios.post(`${API_URL}auth/login`, loginData);
     const { access_token, refresh_token, id, message } = response.data;
 
-    await AsyncStorage.setItem("id", id);
-    await AsyncStorage.setItem("access_token", access_token);
-    await AsyncStorage.setItem("refresh_token", refresh_token);
+    await Loginstorage.setItem("id",  id.toString());
+    await Loginstorage.setItem("access_token", access_token);
+    await Loginstorage.setItem("refresh_token", refresh_token);
 
     return { success: true, message: message || "Inicio de sesión exitoso" };
   } catch (error: any) {

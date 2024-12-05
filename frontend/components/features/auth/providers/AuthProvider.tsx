@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, ReactNode, useEffect } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import Loginstorage from "../../storage";
 import { loginUser } from "../aplications/useLogin";
 
 interface AuthProviderProps {
@@ -19,7 +19,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   useEffect(() => {
     const checkAuth = async () => {
-      const token = await AsyncStorage.getItem("access_token");
+      const token = await Loginstorage.getItem("access_token");
+      console.log("Token almacenado:", token);
+
       setIsAuthenticated(!!token);
     };
     checkAuth();
@@ -34,7 +36,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   const logout = async () => {
-    await AsyncStorage.clear();
+    await Loginstorage.clear();
     setIsAuthenticated(false);
   };
 

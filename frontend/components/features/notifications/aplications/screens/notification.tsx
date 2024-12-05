@@ -3,10 +3,16 @@ import { fetchAndScheduleNotifications } from './notificationView';
 
 const NotificationComponent = () => {
   useEffect(() => {
-    fetchAndScheduleNotifications();
-  }, []); // Ejecuta la función una sola vez cuando se monta el componente.
+    // Configurar un intervalo para obtener notificaciones cada cierto tiempo
+    const intervalId = setInterval(() => {
+      fetchAndScheduleNotifications();
+    }, 60000); // Intervalo de 60 segundos
 
-  return null; // No necesita renderizar nada.
+    // Limpiar el intervalo cuando el componente se desmonte
+    return () => clearInterval(intervalId);
+  }, []);
+
+  return null; // Componente sin UI
 };
 
 export default NotificationComponent;

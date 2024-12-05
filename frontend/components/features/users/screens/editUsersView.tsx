@@ -1,14 +1,22 @@
-import React, { useEffect, useState } from "react"; 
+import React, { useEffect, useState } from "react";
 import { View, Text, TextInput, StyleSheet, TouchableOpacity } from "react-native";
 import axios from "axios";
 import { useRouter } from "expo-router";
-import {config} from  '../../../../config/config'
+import { config } from "../../../../config/config";
+//import AsyncStorage from "@react-native-async-storage/async-storage";
+import Loginstorage from "../../storage";
 const API_URL = config.API_URL;
+import RNRestart from 'react-native-restart';
 
-import AsyncStorage from "@react-native-async-storage/async-storage";
+// Define un tipo para el usuario
+interface User {
+  user: string;
+  email: string;
+}
 
+// EditUserView componente
 export const EditUserView = () => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<User | null>(null);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -19,12 +27,12 @@ export const EditUserView = () => {
 
   useEffect(() => {
     const fetchUserData = async () => {
-      const token = await AsyncStorage.getItem("access_token");
-      const id = await AsyncStorage.getItem("id");
+      const token = await Loginstorage.getItem("access_token");
+      const id = await Loginstorage.getItem("id");
       if (token) {
         try {
           const response = await axios.get(`${API_URL}users/${id}`, {
-            headers: { Authorization: `Bearer ${token}` }
+            headers: { Authorization: `Bearer ${token}` },
           });
           setUser(response.data);
           setName(response.data.user);
@@ -40,23 +48,25 @@ export const EditUserView = () => {
   const handleUpdateUser = async () => {
     setErrorMessage("");
     setSuccessMessage("");
-    const token = await AsyncStorage.getItem("access_token");
-    const id = await AsyncStorage.getItem("id");
-  
+
+    const token = await Loginstorage.getItem("access_token");
+    const id = await Loginstorage.getItem("id");
+
     if (!currentPassword) {
       setErrorMessage("Por favor ingresa la contraseña actual para confirmar.");
       return;
     }
-  
-    const updatedData = {};
-    if (name !== user.user) updatedData.user = name;
-    if (email !== user.email) updatedData.email = email;
-    if (password) updatedData.newPassword = password; 
-  
-    if (token && Object.keys(updatedData).length > 0) {
+
+    // Verifica si `user` es no nulo antes de acceder a sus propiedades
+    if (user) {
+      const updatedData: Partial<User> & { newPassword?: string } = {};
+      if (name !== user.user) updatedData.user = name;
+      if (email !== user.email) updatedData.email = email;
+      if (password) updatedData.newPassword = password;
+
       try {
         const response = await axios.patch(
-          `${API_URL}/users/${id}`,
+          `${API_URL}users/${id}`,
           { ...updatedData, currentPassword },
           {
             headers: { Authorization: `Bearer ${token}` },
@@ -64,17 +74,21 @@ export const EditUserView = () => {
         );
         setSuccessMessage("Datos actualizados con éxito.");
         setTimeout(() => {
-          router.push("/users/loged");
+             RNRestart.Restart();//window.location.reload();
         }, 2000);
       } catch (error) {
-        setErrorMessage(error.response?.data?.message || "Hubo un problema al actualizar los datos.");
+        if (axios.isAxiosError(error)) {
+          // Manejo específico para errores de Axios
+          setErrorMessage(error.response?.data?.message || "Hubo un problema al actualizar los datos.");
+        } else {
+          // Manejo genérico para otros tipos de errores
+          setErrorMessage("Ocurrió un error inesperado.");
+        }
         setSuccessMessage("");
       }
-    } else {
-      setErrorMessage("No hay cambios para actualizar.");
     }
   };
-  
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Editar Usuario</Text>
@@ -97,9 +111,7 @@ export const EditUserView = () => {
         value={password}
         onChangeText={setPassword}
       />
-      
       <Text style={styles.subtitle}>Ingrese su contraseña actual para confirmar cambios</Text>
-
       <TextInput
         style={styles.input}
         placeholder="Contraseña Actual"
@@ -108,9 +120,8 @@ export const EditUserView = () => {
         onChangeText={setCurrentPassword}
       />
       <TouchableOpacity style={styles.button} onPress={handleUpdateUser}>
-  <Text style={styles.buttonText}>Actualizar Datos</Text>
-</TouchableOpacity>
-
+        <Text style={styles.buttonText}>Actualizar Datos</Text>
+      </TouchableOpacity>
       {errorMessage ? <Text style={styles.error}>{errorMessage}</Text> : null}
       {successMessage ? <Text style={styles.success}>{successMessage}</Text> : null}
     </View>
