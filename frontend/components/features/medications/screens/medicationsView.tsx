@@ -84,7 +84,7 @@ export const MedicationsView = () => {
         setMedications((prevMedications) =>
           prevMedications.filter((medication: Medication) => medication.id !== id)
         );
-        console.log('Medication deleted successfully');
+           // console.log('Medication deleted successfully');
       } else {
         console.error('Error deleting medication', await response.json());
       }
@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: '#f9f9f9',
+    backgroundColor: '#E0FFFF',
   },
   card: {
     backgroundColor: '#24b5b1',

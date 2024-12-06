@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { View, TextInput, Button, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
-import {config} from  '../../../../config/config'
+import { config } from '../../../../config/config'
 const API_URL = config.API_URL;
 import Loginstorage from '../../storage';
+import * as Updates from 'expo-updates';
+
 
 
 export function EditMedicationsView({ navigation }: { navigation: any }) {
@@ -34,9 +36,16 @@ export function EditMedicationsView({ navigation }: { navigation: any }) {
       fetchMedicationDetails();
     }
   }, [medicationId]);
+  useEffect(() => {
+    if (pillCount && intervalHours) {
+      const calculatedEndDate = new Date();
+      calculatedEndDate.setHours(calculatedEndDate.getHours() + pillCount * intervalHours);
+      setEndDate(calculatedEndDate);
+    }
+  }, [pillCount, intervalHours]);
 
   const fetchMedicationDetails = async () => {
-   
+
     const token = await Loginstorage.getItem('access_token');
     const response = await fetch(`${API_URL}medications/${medicationId}`, {
       method: 'GET',
@@ -51,7 +60,7 @@ export function EditMedicationsView({ navigation }: { navigation: any }) {
       setEndDate(new Date(medicationData.finish_time));
 
       if (isNaN(new Date(medicationData.finish_time).getTime())) {
-        console.error('Fecha de término inválida recibida del backend');
+        // console.error('Fecha de término inválida recibida del backend');
         setEndDate(new Date());
       }
     } else {
@@ -62,19 +71,23 @@ export function EditMedicationsView({ navigation }: { navigation: any }) {
   const handleEditMedication = async () => {
     if (loading) return;
     setLoading(true);
-
+  
     const token = await Loginstorage.getItem('access_token');
     const userId = await Loginstorage.getItem('id');
-    localStorage.removeItem("medicationId");
-
-    if (isNaN(endDate.getTime())) {
-      console.error('Fecha de término inválida', endDate);
-      setSuccessMessage('Error en la fecha de término');
+  
+    if (!medicationId || !token || !userId) {
+      setSuccessMessage('Faltan datos requeridos');
       setLoading(false);
       return;
     }
-
-   
+  
+    if (isNaN(endDate.getTime())) {
+      console.error('Fecha de término inválida', endDate);
+      setSuccessMessage('Fecha inválida');
+      setLoading(false);
+      return;
+    }
+  
     const updatedMedicationData = {
       name,
       quantity: pillCount,
@@ -82,8 +95,7 @@ export function EditMedicationsView({ navigation }: { navigation: any }) {
       finish_time: endDate.toISOString(),
       user: userId,
     };
-    
-
+  
     try {
       const response = await fetch(`${API_URL}medications/editWithSchedule/${medicationId}`, {
         method: 'PATCH',
@@ -93,32 +105,40 @@ export function EditMedicationsView({ navigation }: { navigation: any }) {
         },
         body: JSON.stringify(updatedMedicationData),
       });
-
+  
       if (response.ok) {
         setSuccessMessage('Medicamento editado exitosamente');
-        setTimeout(() => {
+        setTimeout(async () => {
           setSuccessMessage('');
+          try {
+            await Updates.reloadAsync(); // Recarga la aplicación al finalizar la edición correctamente
+          } catch (error) {
+            console.error('Error al recargar la aplicación:', error);
+          }
           navigation.goBack();
         }, 2000);
       } else {
-        console.error('Error al editar el medicamento', await response.json());
-        setSuccessMessage('Error al editar el medicamento');
-        setTimeout(() => setSuccessMessage(''), 2000);
+        const errorData = await response.json();
+        console.error('Error al editar:', errorData);
+        setSuccessMessage(`Error: ${errorData.message || 'Ocurrió un problema'}`);
       }
     } catch (error) {
-      console.error('Error en la solicitud', error);
+      console.error('Error en la solicitud:', error);
       setSuccessMessage('Error en la solicitud');
-      setTimeout(() => setSuccessMessage(''), 2000);
     } finally {
       setLoading(false);
     }
   };
-
   
-  const handleCancel = async () =>{
-    localStorage.removeItem("medicationId");
-    navigation.goBack()
-  }
+
+  const handleCancel = async () => {
+    try {
+      await Loginstorage.removeItem("medicationId"); // Elimina el ID almacenado
+      await Updates.reloadAsync(); // Recarga la aplicación
+    } catch (error) {
+      console.error('Error al manejar la cancelación o recargar la aplicación:', error);
+    }
+  };
 
 
   return (
@@ -157,8 +177,9 @@ export function EditMedicationsView({ navigation }: { navigation: any }) {
 
         <Text style={styles.label}>Fecha de término calculada</Text>
         <Text style={styles.dateText}>
-          {endDate.toLocaleString()}
-        </Text>
+  {endDate ? endDate.toLocaleString() : 'Fecha no disponible'}
+</Text>
+
 
         {successMessage ? <Text style={styles.successMessage}>{successMessage}</Text> : null}
 
@@ -167,11 +188,13 @@ export function EditMedicationsView({ navigation }: { navigation: any }) {
             <Text style={styles.buttonText}>Guardar Cambios</Text>
           </TouchableOpacity>
         </View>
+        
         <View style={styles.buttonContainer}>
           <TouchableOpacity style={styles.cancelButton} onPress={handleCancel}>
             <Text style={styles.cancelButtonText}>Cancelar</Text>
           </TouchableOpacity>
         </View>
+
       </View>
     </View>
   );
@@ -180,7 +203,7 @@ export function EditMedicationsView({ navigation }: { navigation: any }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#E0FFFF',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -210,7 +233,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   button: {
-    backgroundColor: '#00ffcc',
+    backgroundColor: '#00E3DB',
     borderRadius: 8,
     padding: 15,
     alignItems: 'center',
@@ -221,7 +244,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   cancelButton: {
-    backgroundColor: '#00ffcc',
+    backgroundColor: '#00E3DB ',
     borderRadius: 8,
     padding: 15,
     alignItems: 'center',

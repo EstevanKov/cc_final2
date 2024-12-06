@@ -8,7 +8,7 @@ export default function EditMedicationsScreen() {
   const navigation = useNavigation(); // Esto obtiene la navegación de react-navigation
 
   return (<>
-  <EditMedicationsView navigation={navigation} />;
+  <EditMedicationsView navigation={navigation} />
     <NotificationComponent />
   </>
 

@@ -20,7 +20,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   useEffect(() => {
     const checkAuth = async () => {
       const token = await Loginstorage.getItem("access_token");
-      console.log("Token almacenado:", token);
+         // console.log("Token almacenado:", token);
 
       setIsAuthenticated(!!token);
     };

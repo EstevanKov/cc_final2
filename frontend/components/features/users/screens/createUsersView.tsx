@@ -18,7 +18,6 @@ export const CreateUsersView = () => {
 
   const handleSubmit = async () => {
     const result = await handleCreateUser();
-    console.log(result); // Los mensajes ya se manejan dentro del hook
   };
   
   
@@ -71,7 +70,7 @@ const styles = StyleSheet.create({
     padding: 16, 
     flex: 1, 
     justifyContent: 'center',
-    backgroundColor: "#fff",
+    backgroundColor: "#E0FFFF",
   },
   title: { 
     fontSize: 24, 

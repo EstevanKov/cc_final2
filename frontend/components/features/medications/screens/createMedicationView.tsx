@@ -67,10 +67,7 @@ export function CreateMedicationsView() {
           <TouchableOpacity style={styles.button} onPress={handleAddMedication}>
             <Text style={styles.buttonText}>Agregar Medicamentos</Text>
           </TouchableOpacity>
-          {/**
-          <TouchableOpacity style={styles.cancelButton}>
-            <Text style={styles.buttonText}>Cancelar</Text>
-          </TouchableOpacity> */}
+  
         </View>
       </View>
     </View>
@@ -82,7 +79,7 @@ export function CreateMedicationsView() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#E0FFFF',
   },
   content: {
     padding: 16,

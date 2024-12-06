@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react"; 
 import { useCreateMedications as useCreateMedicationsContext } from "../providers/CreateMedicationProvider";
 import { storage } from "../../utils";
+import * as Updates from 'expo-updates';
 
 export function useCreateMedications() {
   // Estado para almacenar los datos del medicamento y horarios
@@ -39,7 +40,7 @@ export function useCreateMedications() {
     for (let i = 0; i < pillCount; i++) {
       const pillTime = new Date(currentDate.getTime() + i * intervalInMilliseconds);
       newSchedules.push(pillTime);
-      //console.log(`Toma ${i + 1}: ${pillTime.toLocaleString()} - Debes tomar ${name}`);
+      //   // console.log(`Toma ${i + 1}: ${pillTime.toLocaleString()} - Debes tomar ${name}`);
       
       // Programar notificaciones para cada toma (si decides seguir usando esto)
     
@@ -76,13 +77,15 @@ export function useCreateMedications() {
       notifications,  // Enviar las notificaciones correctamente
       user: id,
     };
-    console.log('Medicamento Data:', medicamentoData);  // Verifica la estructura de los datos
+       // console.log('Medicamento Data:', medicamentoData);  // Verifica la estructura de los datos
   
     // Llamar a la función del contexto para agregar el medicamento
     const success = await addMedication(medicamentoData, token);
     if (success) {
       // Mostrar mensaje de éxito y limpiar los campos
       setSuccessMessage("Medicamento añadido exitosamente");
+      await Updates.reloadAsync();
+
       setName("");
       setPillCount(1);
       setIntervalHours(1);

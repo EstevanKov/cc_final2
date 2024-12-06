@@ -5,9 +5,8 @@ import { useRouter } from "expo-router";
 import {config} from  '../../../../config/config'
 const API_URL = config.API_URL;
 import Loginstorage from "../../storage";
-import RNRestart from 'react-native-restart';
+import * as Updates from 'expo-updates';
 
-//import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export const DeleteUserView = () => {
   const [currentPassword, setCurrentPassword] = useState("");
@@ -15,52 +14,49 @@ export const DeleteUserView = () => {
   const router = useRouter();
 
   const handleDeleteUser = async () => {
-    setErrorMessage("");
-
-    if (!currentPassword) {
-      setErrorMessage("Por favor ingresa la contraseña actual para confirmar.");
-      return;
-    }
-
-    const token = await Loginstorage.getItem("access_token");
-    const id = await Loginstorage.getItem("id");
-
-    if (token && id) {
-      try {
-        /*/ Eliminar schedules asociados al usuario
-        await axios.delete(`${BACKEND_URL}/users/${id}/shedules`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        // Eliminar medications asociados al usuario
-        await axios.delete(`${BACKEND_URL}/users/${id}/medications`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        // Eliminar usuario*/
-        await axios.delete(`${API_URL}users/${id}`, {
-          headers: { Authorization: `Bearer ${token}` },
-          data: { currentPassword },
-        });
-
-        await Loginstorage.removeItem("access_token");
-        await Loginstorage.removeItem("refresh_token");
-        await Loginstorage.removeItem("id");
-           RNRestart.Restart();//window.location.reload();
-
-        //router.push("/auth/login");
-      } catch (error: unknown) {
-
-        if (error instanceof AxiosError) {
-          setErrorMessage(error.response?.data?.message || "Hubo un problema al eliminar la cuenta.");
-        } else {
-          setErrorMessage("Ocurrió un error inesperado.");
-        }
+    try {
+      setErrorMessage("");
+  
+      if (!currentPassword) {
+        setErrorMessage("Por favor ingresa la contraseña actual para confirmar.");
+        return;
       }
-    } else {
-      setErrorMessage("No se pudo autenticar al usuario.");
+  
+      const token = await Loginstorage.getItem("access_token");
+      const id = await Loginstorage.getItem("id");
+  
+      if (token && id) {
+        try {
+          // Eliminar usuario
+          await axios.delete(`${API_URL}users/${id}`, {
+            headers: { Authorization: `Bearer ${token}` },
+            data: { currentPassword },
+          });
+  
+          // Limpiar el almacenamiento y reiniciar
+          await Loginstorage.removeItem("access_token");
+          await Loginstorage.removeItem("refresh_token");
+          await Loginstorage.removeItem("id");
+  
+          // Recargar la aplicación después de eliminar al usuario
+          await Updates.reloadAsync();
+  
+          // Si usas RNRestart en lugar de Updates.reloadAsync
+        } catch (error: unknown) {
+          if (error instanceof AxiosError) {
+            setErrorMessage(error.response?.data?.message || "Hubo un problema al eliminar la cuenta.");
+          } else {
+            setErrorMessage("Ocurrió un error inesperado.");
+          }
+        }
+      } else {
+        setErrorMessage("No se pudo autenticar al usuario.");
+      }
+    } catch (e) {
+      console.error("Error recargando la aplicación:", e);
     }
   };
+  
 
   return (
     <View style={styles.container}>
@@ -91,7 +87,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 16,
-    backgroundColor: '#fff',
+    backgroundColor: '#E0FFFF',
   },
   title: {
     fontSize: 24,
@@ -123,7 +119,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 16,
-    backgroundColor: '#00D1A0',
+    backgroundColor: '#00E3DB',
   },
   buttonText: {
     fontSize: 18,

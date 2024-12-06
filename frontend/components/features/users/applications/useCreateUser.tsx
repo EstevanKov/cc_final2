@@ -3,7 +3,6 @@ import axios, { AxiosError } from 'axios';
 import { useNavigation, useRouter } from 'expo-router';
 import {config} from  '../../../../config/config'
 import { NavigationProp } from '@react-navigation/native';
-import { useAuth } from '../../auth/providers/AuthProvider';
 import { RootTabParamList } from '../../types';
 const API_URL = config.API_URL;
 
@@ -35,10 +34,6 @@ export const useCreateUser = () => {
   
       setSuccessMessage(response.data.message);
       setErrorMessage('');
-  
-     // setTimeout(() => {
-        //navigation.navigate('Login');
-     // }, 2000);
   
       return { success: true, message: response.data.message };
     } catch (error) {

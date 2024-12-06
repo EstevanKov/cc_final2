@@ -3,10 +3,10 @@ import { View, Text, TextInput, StyleSheet, TouchableOpacity } from "react-nativ
 import axios from "axios";
 import { useRouter } from "expo-router";
 import { config } from "../../../../config/config";
-//import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as Updates from 'expo-updates';
+
 import Loginstorage from "../../storage";
 const API_URL = config.API_URL;
-import RNRestart from 'react-native-restart';
 
 // Define un tipo para el usuario
 interface User {
@@ -48,22 +48,22 @@ export const EditUserView = () => {
   const handleUpdateUser = async () => {
     setErrorMessage("");
     setSuccessMessage("");
-
+  
     const token = await Loginstorage.getItem("access_token");
     const id = await Loginstorage.getItem("id");
-
+  
     if (!currentPassword) {
       setErrorMessage("Por favor ingresa la contraseña actual para confirmar.");
       return;
     }
-
+  
     // Verifica si `user` es no nulo antes de acceder a sus propiedades
     if (user) {
       const updatedData: Partial<User> & { newPassword?: string } = {};
       if (name !== user.user) updatedData.user = name;
       if (email !== user.email) updatedData.email = email;
       if (password) updatedData.newPassword = password;
-
+  
       try {
         const response = await axios.patch(
           `${API_URL}users/${id}`,
@@ -73,8 +73,10 @@ export const EditUserView = () => {
           }
         );
         setSuccessMessage("Datos actualizados con éxito.");
-        setTimeout(() => {
-             RNRestart.Restart();//window.location.reload();
+  
+        // Espera 2 segundos para mostrar el mensaje y luego recarga la aplicación
+        setTimeout(async () => {
+          await Updates.reloadAsync();
         }, 2000);
       } catch (error) {
         if (axios.isAxiosError(error)) {
@@ -88,22 +90,28 @@ export const EditUserView = () => {
       }
     }
   };
+  
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Editar Usuario</Text>
+      
       <TextInput
         style={styles.input}
         placeholder="Nombre"
         value={name}
         onChangeText={setName}
       />
+      <Text style={styles.subtitle}>Ingrese su nuevo Nombre</Text>
+       
       <TextInput
         style={styles.input}
         placeholder="Email"
         value={email}
         onChangeText={setEmail}
       />
+      <Text style={styles.subtitle}>Ingrese su nuevo Correo</Text>
+      
       <TextInput
         style={styles.input}
         placeholder="Nueva Contraseña"
@@ -111,7 +119,8 @@ export const EditUserView = () => {
         value={password}
         onChangeText={setPassword}
       />
-      <Text style={styles.subtitle}>Ingrese su contraseña actual para confirmar cambios</Text>
+       <Text style={styles.subtitle}>Ingrese su nueva Contraseña</Text>
+       <Text style={styles.subtitle}>Si no quiere actualizar contraseña, ingrese la actual</Text>
       <TextInput
         style={styles.input}
         placeholder="Contraseña Actual"
@@ -119,6 +128,8 @@ export const EditUserView = () => {
         value={currentPassword}
         onChangeText={setCurrentPassword}
       />
+            <Text style={styles.subtitle}>Ingrese su contraseña actual para confirmar cambios</Text>
+
       <TouchableOpacity style={styles.button} onPress={handleUpdateUser}>
         <Text style={styles.buttonText}>Actualizar Datos</Text>
       </TouchableOpacity>
@@ -134,7 +145,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 16,
-    backgroundColor: '#fff',
+    backgroundColor: '#E0FFFF',
   },
   title: {
     fontSize: 24,
@@ -166,7 +177,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 16,
-    backgroundColor: '#00D1A0',
+    backgroundColor: '#00E3DB',
   },
   buttonText: {
     fontSize: 18,

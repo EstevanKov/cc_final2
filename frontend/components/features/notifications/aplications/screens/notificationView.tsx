@@ -47,13 +47,13 @@ export async function requestNotificationPermissions() {
     }
   }
 
-  console.log('Notification permissions granted');
+     // console.log('Notification permissions granted');
   return true;
 }
 
-// Solicitar permisos de notificación
+let scheduledNotifications = new Set(); // Utiliza un Set para almacenar los triggers únicos
+
 export async function fetchAndScheduleNotifications() {
-  console.log("Fetching notifications from the backend...");
   const hasPermission = await requestNotificationPermissions();
   if (!hasPermission) return;
 
@@ -75,14 +75,15 @@ export async function fetchAndScheduleNotifications() {
       { headers }
     );
 
-    console.log("Notifications fetched:", schedules);
-
     for (const schedule of schedules) {
       for (const notification of schedule.notifications) {
         const trigger = new Date(notification.sentAt);
 
-        if (trigger > new Date()) {
-          console.log("Scheduling notification:", notification.message);
+        if (trigger > new Date() && !scheduledNotifications.has(trigger.getTime())) {
+          // Agregar al Set para evitar duplicados
+          scheduledNotifications.add(trigger.getTime());
+
+          // Programar la notificación
           await Notifications.scheduleNotificationAsync({
             content: {
               title: 'Recordatorio',
