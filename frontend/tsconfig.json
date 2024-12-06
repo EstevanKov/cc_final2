@@ -1,6 +1,7 @@
 {
   "extends": "./tsconfig.base.json",
   "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
     "jsx": "react",
     "strict": true,
     "paths": {
