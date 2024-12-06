@@ -73,7 +73,7 @@ export const MedicationsView = () => {
       const token = await Loginstorage.getItem('access_token');
       if (!token) return;
 
-      const response = await fetch(`${API_URL}medications/delete/${id}`, {
+      const response = await fetch(`${API_URL}medications/${id}`, {
         method: 'DELETE',
         headers: {
           Authorization: `Bearer ${token}`,
