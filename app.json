@@ -5,7 +5,7 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "capsule_care",
+    "scheme": "capsulecare",
     "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/images/splash.png",
@@ -18,21 +18,23 @@
       "infoPlist": {
         "NSLocationWhenInUseUsageDescription": "capsule Care necesita acceso a tu ubicación.",
         "NSContactsUsageDescription": "capsule Care necesita acceso a tus contactos",
-        "UIBackgroundModes": ["remote-notification"]
+        "UIBackgroundModes": [
+          "remote-notification"
+        ]
       }
     },
     "android": {
       "permissions": [
-        "android.permissions.INTERNET",
-        "android.permissions.ACCESS_FINE_LOCATION",
-        "android.permissions.ACCESS_COARSE_LOCATION",
-        "android.permissions.READ_CONTACTS"
-
+        "INTERNET",
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "READ_CONTACTS"
       ],
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.estevankov.capsule_care"
     },
     "web": {
       "bundler": "metro",
@@ -46,6 +48,13 @@
     "experiments": {
       "typedRoutes": true
     },
-    "entryPoint": "./node_modules/expo-router/entry"
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "3d627123-3d49-4cb8-a013-b2d69f84f4bd"
+      }
+    }
   }
 }
