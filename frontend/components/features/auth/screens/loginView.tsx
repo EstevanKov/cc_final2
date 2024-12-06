@@ -4,7 +4,7 @@ import { useRouter } from "expo-router";
 import { useAuth } from "../providers/AuthProvider";
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { RootTabParamList } from "../../types";
-import RNRestart from 'react-native-restart';
+import * as Updates from 'expo-updates';
 
 
 export function LoginView() {
@@ -17,20 +17,26 @@ export function LoginView() {
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
 
+
   const handleLogin = async () => {
     const result = await login(email, password);
     if (result.success) {
       setSuccessMessage(result.message);
       setErrorMessage('');
-      //navigation.navigate('Perfil');
-      //   RNRestart.Restart();//window.location.reload();
-      RNRestart.Restart();
-
+  
+      // Recargar la aplicación
+      try {
+        await Updates.reloadAsync();
+      } catch (e) {
+        console.error("Error recargando la aplicación:", e);
+      }
     } else {
       setErrorMessage(result.message);
       setSuccessMessage('');
     }
   };
+  
+  
   return (
     <View style={styles.container}>
       <Image source={require('../../../../assets/images/logo.png')} style={styles.logo} />
@@ -60,10 +66,7 @@ export function LoginView() {
       <TouchableOpacity style={styles.registerText} onPress={() => navigation.navigate('Registro')}  >
         <Text style={styles.registerLink}>¿No tienes una cuenta? Registrate</Text>
       </TouchableOpacity>
-      {/**
-      <Link href="/users/register" style={styles.registerText}>
-        ¿No tienes una cuenta? <Text style={styles.registerLink}>Regístrate</Text>
-      </Link> */}
+    
     </View>
   );
 }

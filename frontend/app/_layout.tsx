@@ -94,9 +94,10 @@ export default function App() {
           >
             {isAuthenticated ? (
               <>
-                <Tab.Screen name="Perfil" component={UsersScreen} />
                 <Tab.Screen name="Medicamentos" component={MedicationsScreen} />
                 <Tab.Screen name="Nuevo" component={CreateMedicationsScreen} />
+                <Tab.Screen name="Perfil" component={UsersScreen} />
+
 
                 {/* Tabs ocultas pero sin visualización */}
                 <Tab.Screen 

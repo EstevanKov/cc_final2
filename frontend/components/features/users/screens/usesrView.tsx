@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
-import { router } from "expo-router";
 import axios from "axios";
 import {config} from  '../../../../config/config'
-//import AsyncStorage from "@react-native-async-storage/async-storage";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { RootTabParamList } from "../../types";
 const API_URL = config.API_URL;
 import Loginstorage from "../../storage";
+import * as Updates from 'expo-updates';
 
 interface User {
   user: string;
@@ -16,7 +15,7 @@ interface User {
 }
 
 export const UsersView = () => {
-  const navigation = useNavigation<NavigationProp<RootTabParamList>>(); // Usar el tipo adecuado para la navegación
+  const navigation = useNavigation<NavigationProp<RootTabParamList>>(); 
 
   const [user, setUser] = useState<User | null>(null);
 
@@ -27,7 +26,6 @@ export const UsersView = () => {
   
       if (token && id) {
         try {
-         // const response = await axios.get('https://0d8f-189-165-203-144.ngrok-free.app/users/1',{
           const response = await axios.get(`${API_URL}users/${id}`, {
             method:"GET",
             headers: { Authorization: `Bearer ${token}`, Accept: 'application/json' },
@@ -42,13 +40,12 @@ export const UsersView = () => {
     fetchUserData();
   }, []);
 
-  const logout = () => {
+  const logout = async () => {
     Loginstorage.removeItem("access_token");
     Loginstorage.removeItem("id");
     Loginstorage.removeItem("refresh_token");
     Loginstorage.removeItem("medicationId");
-
-    //   RNRestart.Restart();//window.location.reload();
+    await Updates.reloadAsync();
   };
 
   const edit = () => {
@@ -101,7 +98,7 @@ export const UsersView = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, alignItems: 'center', backgroundColor: '#FFFFFF' },
+  container: { flex: 1, alignItems: 'center', backgroundColor: '#E0FFFF' },
   headerBackground: {
     backgroundColor: '#00E3DB',
     width: '100%',
